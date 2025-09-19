@@ -1,6 +1,14 @@
+body {
+  background: #000;               /* Schwarzer Hintergrund */
+  color: #fff;                    /* Standard-Schrift: Weiß */
+  font-family: Arial, sans-serif;
+  margin: 2em;
+}
+
+/* Überschrift mit deinem Bild im Hintergrund */
 h1 {
-  color: #fff;
-  background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80');
+  color: #fff;                                      /* Überschrift: Weiß */
+  background-image: url('meinbild.jpg');
   background-size: cover;
   background-position: center;
   padding: 60px 0;
@@ -9,4 +17,30 @@ h1 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   letter-spacing: 2px;
   margin-bottom: 1.5em;
+  border: 2px solid #8e24aa;                        /* Lila Rahmen */
+}
+
+/* Unterüberschriften lila */
+h2 {
+  color: #8e24aa;                                   /* Lila */
+}
+
+/* Links blau */
+a {
+  color: #2196f3;                                   /* Blau */
+  text-decoration: none;
+}
+a:hover {
+  color: #64b5f6;                                   /* Hellblau beim Hover */
+  text-decoration: underline;
+}
+
+/* Listenpunkte in weiß */
+ul, li {
+  color: #fff;
+}
+
+/* Optional: Text in <p> weiß lassen */
+p {
+  color: #fff;
 }
