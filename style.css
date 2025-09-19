@@ -7,17 +7,18 @@ body {
 
 /* Überschrift mit deinem Bild im Hintergrund */
 h1 {
-  color: #fff;                                      /* Überschrift: Weiß */
+h1 {
+  color: #fff;
   background-image: url('meinbild.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 60px 0;
+  background-size: contain;          /* Bild komplett anzeigen, nicht zuschneiden */
+  background-repeat: no-repeat;      /* Bild nicht wiederholen */
+  background-position: center;       /* Bild zentrieren */
+  padding: 120px 0;                  /* Höhe anpassen, damit Bild Platz hat */
   text-align: center;
-  border-radius: 15px;
+  border: none;                      /* Kein Rahmen */
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   letter-spacing: 2px;
   margin-bottom: 1.5em;
-  border: 2px solid #8e24aa;                        /* Lila Rahmen */
 }
 
 /* Unterüberschriften lila */
