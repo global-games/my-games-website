@@ -7,7 +7,6 @@ body {
 
 /* Überschrift mit deinem Bild im Hintergrund */
 h1 {
-h1 {
   color: #fff;
   background-image: url('meinbild.jpg');
   background-size: contain;          /* Bild komplett anzeigen, nicht zuschneiden */
