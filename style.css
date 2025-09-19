@@ -1,0 +1,12 @@
+h1 {
+  color: #fff;
+  background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+  padding: 60px 0;
+  text-align: center;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  letter-spacing: 2px;
+  margin-bottom: 1.5em;
+}
