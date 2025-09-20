@@ -9,15 +9,15 @@ body {
 h1 {
   color: #fff;
   background-image: url('meinbild.jpg');
-  background-size: 40% auto;         /* Bild leicht verkleinert */
+  background-size: 90% auto;         /* Bild leicht verkleinert */
   background-repeat: no-repeat;
-  background-position: 60% 400px;     /* Bild weiter rechts und leicht unten */
+  background-position: 60% 60px;     /* Bild weiter rechts und leicht unten */
   padding-top: 170px;                /* Viel Platz oben für vertikale Zentrierung */
-  padding-bottom: 100px;              /* Unten auch Platz */
+  padding-bottom: 90px;              /* Unten auch Platz */
   padding-left: 2em;                 /* Überschrift nach links rücken */
   text-align: left;                  /* Text linksbündig */
   box-shadow: none;
-  letter-spacing: 5px;
+  letter-spacing: 2px;
   margin-bottom: 1.5em;
   margin-left: 0;
   height: 200px;                     /* Feste Höhe für sichtbaren Scrollbereich */
