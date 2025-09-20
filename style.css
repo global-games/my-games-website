@@ -56,4 +56,34 @@ h1 {
   }
 }
 
-/* Optional: Klasse für
+/* Optional: Klasse für farbigen Animationseffekt überall */
+.colorful-text {
+  background: linear-gradient(-45deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: colorFlow 8s linear infinite;
+}
+
+h2 {
+  color: #8e24aa;
+}
+
+a {
+  color: #2196f3;
+  text-decoration: none;
+}
+a:hover {
+  color: #64b5f6;
+  text-decoration: underline;
+}
+
+ul, li {
+  color: #fff;
+}
+
+p {
+  color: #fff;
+}
