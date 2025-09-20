@@ -5,28 +5,24 @@ body {
   margin: 2em;
 }
 
-/* Farbverlaufs-Effekt als animierter Textverlauf – für ALLE Überschriften und Fließtext */
-h1, h2, p, li, a {
-  background: linear-gradient(90deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
+/* Moderner, dezenter Verlauf für alle Texte */
+h2, p, li, a {
+  background: linear-gradient(90deg, #1a237e 15%, #8e24aa 60%, #ff4081 100%);
   background-size: 200% 100%;
   background-position: 0 0;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
-  animation: colorFlowText 6s linear infinite;
+  animation: subtleFlow 12s linear infinite;
 }
 
-@keyframes colorFlowText {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 200% 0%;
-  }
+@keyframes subtleFlow {
+  0%   {background-position: 0% 0%;}
+  100% {background-position: 200% 0%;}
 }
 
-/* Überschrift mit Bild-Hintergrund und Wellen-Animation für Buchstaben */
+/* Bild als Hintergrund, Verlauf als Text, Wellen- und Glitch-Effekt für h1 */
 h1 {
   position: relative;
   padding-top: 170px;
@@ -39,31 +35,54 @@ h1 {
   overflow-y: auto;
   scroll-behavior: smooth;
   letter-spacing: 2px;
-
-  /* Bild wieder sichtbar */
-  background-image: url('meinbild.jpg'), linear-gradient(90deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
-  background-repeat: no-repeat, repeat;
-  background-size: 90% auto, 200% 100%;
-  background-position: 60% 60px, 0 0;
+  background-image: url('meinbild.jpg');
+  background-repeat: no-repeat;
+  background-size: 90% auto;
+  background-position: 60% 60px;
+  z-index: 1;
 }
 
-/* Welleneffekt für einzelne Buchstaben der Überschrift */
+/* Farbverlauf + Glitch-Animation für die Buchstaben der Überschrift */
 h1 span {
   display: inline-block;
-  animation: wave 1.5s infinite;
-  animation-delay: calc(var(--char-index) * 0.09s);
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(120deg, #ff4081 0%, #8e24aa 40%, #1a237e 80%);
+  background-size: 300% 300%;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: colorGlitch 2.5s cubic-bezier(0.4,0,0.2,1) infinite, wave 1.6s infinite;
+  animation-delay: calc(var(--char-index) * 0.08s), calc(var(--char-index) * 0.09s);
+  /* Glitch-Shadow */
+  text-shadow: 0 0 8px #ff4081dd, 0 0 2px #1a237edd;
 }
 
-/* Keyframes für Welleneffekt */
+/* Laufender Farbverlauf + Flackern */
+@keyframes colorGlitch {
+  0%   {background-position: 0% 50%;}
+  30%  {background-position: 50% 80%;}
+  32%  {background-position: 47% 85%;}
+  34%  {background-position: 55% 80%;}
+  50%  {background-position: 100% 50%;}
+  52%  {background-position: 98% 45%;}
+  54%  {background-position: 102% 55%;}
+  100% {background-position: 0% 50%;}
+}
+
+/* Wellen-Animation */
 @keyframes wave {
-  0%, 100% { transform: translateY(0); }
-  20% { transform: translateY(-14px); }
-  40% { transform: translateY(7px); }
-  60% { transform: translateY(-7px); }
-  80% { transform: translateY(4px); }
+  0%,100% { transform: translateY(0); }
+  15%     { transform: translateY(-15px); }
+  30%     { transform: translateY(8px); }
+  50%     { transform: translateY(-8px); }
+  70%     { transform: translateY(6px); }
+  85%     { transform: translateY(-4px); }
 }
 
-/* Lila für h2 als Fallback für Browser ohne gradient-clip */
+/* Fallback für h2 bei nicht unterstützten Effekten */
 h2 {
   color: #8e24aa;
 }
@@ -73,7 +92,7 @@ a {
   text-decoration: none;
 }
 a:hover {
-  color: #64b5f6;
+  color: #ff4081;
   text-decoration: underline;
 }
 
