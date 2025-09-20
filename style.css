@@ -1,17 +1,3 @@
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const h1 = document.querySelector('h1');
-  if (!h1) return;
-  const text = h1.textContent;
-  h1.innerHTML = '';
-  [...text].forEach((char, i) => {
-    const span = document.createElement('span');
-    span.textContent = char;
-    span.style.setProperty('--char-index', i);
-    h1.appendChild(span);
-  });
-});
-</script>
 body {
   background: #101729;
   color: #fff;
@@ -19,24 +5,7 @@ body {
   margin: 2em;
 }
 
-/* Moderner, dezenter Verlauf für alle Texte */
-h2, p, li, a {
-  background: linear-gradient(90deg, #1a237e 15%, #8e24aa 60%, #ff4081 100%);
-  background-size: 200% 100%;
-  background-position: 0 0;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  animation: subtleFlow 12s linear infinite;
-}
-
-@keyframes subtleFlow {
-  0%   {background-position: 0% 0%;}
-  100% {background-position: 200% 0%;}
-}
-
-/* Bild als Hintergrund, Verlauf als Text, Wellen- und Glitch-Effekt für h1 */
+/* Professioneller Farb- und Welleneffekt für die Überschrift */
 h1 {
   position: relative;
   padding-top: 170px;
@@ -49,6 +18,8 @@ h1 {
   overflow-y: auto;
   scroll-behavior: smooth;
   letter-spacing: 2px;
+
+  /* Bild im Hintergrund */
   background-image: url('meinbild.jpg');
   background-repeat: no-repeat;
   background-size: 90% auto;
@@ -56,52 +27,66 @@ h1 {
   z-index: 1;
 }
 
-/* Farbverlauf + Glitch-Animation für die Buchstaben der Überschrift */
 h1 span {
   display: inline-block;
   position: relative;
   z-index: 2;
-  background: linear-gradient(120deg, #ff4081 0%, #8e24aa 40%, #1a237e 80%);
-  background-size: 300% 300%;
+  /* Moderner, edler Verlauf */
+  background: linear-gradient(120deg, #efefff 10%, #8e24aa 60%, #1a237e 90%);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  /* Sanfter, spiegelnder Glanz */
+  filter: drop-shadow(0 2px 8px rgba(142,36,170,0.16));
+  animation:
+    colorSlide 4s ease-in-out infinite,
+    wave 1.6s infinite;
+  animation-delay:
+    calc(var(--char-index) * 0.05s),
+    calc(var(--char-index) * 0.09s);
+}
+
+@keyframes colorSlide {
+  0%   {background-position: 0% 50%;}
+  50%  {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+@keyframes wave {
+  0%,100% { transform: translateY(0);}
+  15%     { transform: translateY(-15px);}
+  30%     { transform: translateY(8px);}
+  50%     { transform: translateY(-8px);}
+  70%     { transform: translateY(6px);}
+  85%     { transform: translateY(-4px);}
+}
+
+/* Sehr dezenter Verlauf für restlichen Text */
+h2, p, li, a {
+  /* Von hellgrau zu leicht blau */
+  background: linear-gradient(90deg, #b0bacf 0%, #6f7fa1 100%);
+  background-size: 150% 100%;
   background-position: 0 0;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
-  animation: colorGlitch 2.5s cubic-bezier(0.4,0,0.2,1) infinite, wave 1.6s infinite;
-  animation-delay: calc(var(--char-index) * 0.08s), calc(var(--char-index) * 0.09s);
-  /* Glitch-Shadow */
-  text-shadow: 0 0 8px #ff4081dd, 0 0 2px #1a237edd;
+  animation: subtleTextFade 10s ease-in-out infinite;
 }
 
-/* Laufender Farbverlauf + Flackern */
-@keyframes colorGlitch {
-  0%   {background-position: 0% 50%;}
-  30%  {background-position: 50% 80%;}
-  32%  {background-position: 47% 85%;}
-  34%  {background-position: 55% 80%;}
-  50%  {background-position: 100% 50%;}
-  52%  {background-position: 98% 45%;}
-  54%  {background-position: 102% 55%;}
-  100% {background-position: 0% 50%;}
+@keyframes subtleTextFade {
+  0%   {background-position: 0% 0%;}
+  50%  {background-position: 100% 0%;}
+  100% {background-position: 0% 0%;}
 }
 
-/* Wellen-Animation */
-@keyframes wave {
-  0%,100% { transform: translateY(0); }
-  15%     { transform: translateY(-15px); }
-  30%     { transform: translateY(8px); }
-  50%     { transform: translateY(-8px); }
-  70%     { transform: translateY(6px); }
-  85%     { transform: translateY(-4px); }
-}
-
-/* Fallback für h2 bei nicht unterstützten Effekten */
 h2 {
   color: #8e24aa;
 }
 
-/* Links */
 a {
   text-decoration: none;
 }
