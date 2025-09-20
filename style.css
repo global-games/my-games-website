@@ -9,15 +9,17 @@ body {
 h1 {
   color: #fff;
   background-image: url('meinbild.jpg');
-  background-size: 140% auto;        /* Bild vergrößert (Breite), Höhe automatisch */
-  background-repeat: no-repeat;      /* Bild nicht wiederholen */
-  background-position: 65% 60px;     /* Weiter nach rechts (65%), leicht nach unten (60px) */
-  padding: 180px 0 80px 0;           /* Mehr Platz oben/unten für das größere Bild */
-  text-align: center;
-  /* border entfernt */
-  box-shadow: none;                  /* Kein Schatten mehr */
+  background-size: 90% auto;         /* Bild leicht verkleinert */
+  background-repeat: no-repeat;
+  background-position: 60% 60px;     /* Bild weiter rechts und leicht unten */
+  padding-top: 170px;                /* Viel Platz oben für vertikale Zentrierung */
+  padding-bottom: 90px;              /* Unten auch Platz */
+  padding-left: 2em;                 /* Überschrift nach links rücken */
+  text-align: left;                  /* Text linksbündig */
+  box-shadow: none;
   letter-spacing: 2px;
   margin-bottom: 1.5em;
+  margin-left: 0;                    /* Ganz links starten */
 }
 
 /* Unterüberschriften lila */
