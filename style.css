@@ -11,7 +11,7 @@ h1 {
   background-image: url('meinbild.jpg');
   background-size: 40% auto;         /* Bild leicht verkleinert */
   background-repeat: no-repeat;
-  background-position: 80% 250px;     /* Bild weiter rechts und leicht unten */
+  background-position: 90% 500px;     /* Bild weiter rechts und leicht unten */
   padding-top: 170px;                /* Viel Platz oben für vertikale Zentrierung */
   padding-bottom: 150px;              /* Unten auch Platz */
   padding-left: 2em;                 /* Überschrift nach links rücken */
