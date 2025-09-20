@@ -1,51 +1,59 @@
 body {
-  background: #101729;               /* Schwarzer Hintergrund */
-  color: #fff;                       /* Standard-Schrift: Weiß */
+  background: #101729;
+  color: #fff;
   font-family: Arial, sans-serif;
   margin: 2em;
+  /* Optional: Animierter Schrifteffekt für ganzen Body */
+  /* 
+  animation: colorFlow 8s linear infinite;
+  background: linear-gradient(-45deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  */
 }
 
-/* Überschrift mit deinem Bild im Hintergrund und Scrollbalken */
+/* Überschrift mit animiertem Farbverlauf und Scrollbalken */
 h1 {
-  color: #fff;
   background-image: url('meinbild.jpg');
-  background-size: 90% auto;         /* Bild leicht verkleinert */
+  background-size: 90% auto;
   background-repeat: no-repeat;
-  background-position: 60% 60px;     /* Bild weiter rechts und leicht unten */
-  padding-top: 170px;                /* Viel Platz oben für vertikale Zentrierung */
-  padding-bottom: 90px;              /* Unten auch Platz */
-  padding-left: 2em;                 /* Überschrift nach links rücken */
-  text-align: left;                  /* Text linksbündig */
+  background-position: 60% 60px;
+  padding-top: 170px;
+  padding-bottom: 90px;
+  padding-left: 2em;
+  text-align: left;
   box-shadow: none;
   letter-spacing: 2px;
   margin-bottom: 1.5em;
   margin-left: 0;
-  height: 200px;                     /* Feste Höhe für sichtbaren Scrollbereich */
-  overflow-y: auto;                  /* Vertikaler Scrollbalken */
-  scroll-behavior: smooth;           /* Weiches Scrollen */
+  height: 200px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+
+  /* Farbverlauf für Text */
+  background-clip: padding-box;
+  /* Effekt für Schrift */
+  background: linear-gradient(-45deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: colorFlow 8s linear infinite;
 }
 
-/* Unterüberschriften lila */
-h2 {
-  color: #8e24aa;
+/* Farbverlauf-Animation */
+@keyframes colorFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-/* Links blau */
-a {
-  color: #2196f3;
-  text-decoration: none;
-}
-a:hover {
-  color: #64b5f6;
-  text-decoration: underline;
-}
-
-/* Listenpunkte in weiß */
-ul, li {
-  color: #fff;
-}
-
-/* Optional: Text in <p> weiß lassen */
-p {
-  color: #fff;
-}
+/* Optional: Klasse für
