@@ -13,7 +13,7 @@ h1 {
   background-repeat: no-repeat;
   background-position: 60% 400px;     /* Bild weiter rechts und leicht unten */
   padding-top: 170px;                /* Viel Platz oben für vertikale Zentrierung */
-  padding-bottom: 150px;              /* Unten auch Platz */
+  padding-bottom: 100px;              /* Unten auch Platz */
   padding-left: 2em;                 /* Überschrift nach links rücken */
   text-align: left;                  /* Text linksbündig */
   box-shadow: none;
