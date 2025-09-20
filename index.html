@@ -18,3 +18,37 @@ window.onload = function() {
   h1.scrollTop = h1.scrollHeight;
 };
   </script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Moderne Überschrift mit Farbeffekt</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Deine Moderne Überschrift</h1>
+  <h2>Unterüberschrift</h2>
+  <p>Das ist ein Beispieltext mit Glanzreflex. Der Effekt ist dezent und lenkt nicht vom Inhalt ab.</p>
+  <ul>
+    <li>Liste mit Glanz</li>
+    <li>Noch ein Punkt</li>
+  </ul>
+  <a href="#">Ein moderner Link</a>
+
+  <!-- Wellen- und Farbeffekt für Überschrift: -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const h1 = document.querySelector('h1');
+    if (!h1) return;
+    const text = h1.textContent;
+    h1.innerHTML = '';
+    [...text].forEach((char, i) => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.setProperty('--char-index', i);
+      h1.appendChild(span);
+    });
+  });
+  </script>
+</body>
+    </html>
