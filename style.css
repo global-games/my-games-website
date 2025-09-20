@@ -3,76 +3,73 @@ body {
   color: #fff;
   font-family: Arial, sans-serif;
   margin: 2em;
-  /* Optional: Animierter Schrifteffekt für ganzen Body */
-  /* 
-  animation: colorFlow 8s linear infinite;
-  background: linear-gradient(-45deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  */
 }
 
-/* Überschrift mit animiertem Farbverlauf und Scrollbalken */
+/* Farbverlaufs-Effekt als animierter Textverlauf – für ALLE Überschriften und Fließtext */
+h1, h2, p, li, a {
+  background: linear-gradient(90deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: colorFlowText 6s linear infinite;
+}
+
+@keyframes colorFlowText {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+/* Überschrift mit Bild-Hintergrund und Wellen-Animation für Buchstaben */
 h1 {
-  background-image: url('meinbild.jpg');
-  background-size: 90% auto;
-  background-repeat: no-repeat;
-  background-position: 60% 60px;
+  position: relative;
   padding-top: 170px;
   padding-bottom: 90px;
   padding-left: 2em;
   text-align: left;
-  box-shadow: none;
-  letter-spacing: 2px;
   margin-bottom: 1.5em;
   margin-left: 0;
   height: 200px;
   overflow-y: auto;
   scroll-behavior: smooth;
+  letter-spacing: 2px;
 
-  /* Farbverlauf für Text */
-  background-clip: padding-box;
-  /* Effekt für Schrift */
-  background: linear-gradient(-45deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  animation: colorFlow 8s linear infinite;
+  /* Bild wieder sichtbar */
+  background-image: url('meinbild.jpg'), linear-gradient(90deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
+  background-repeat: no-repeat, repeat;
+  background-size: 90% auto, 200% 100%;
+  background-position: 60% 60px, 0 0;
 }
 
-/* Farbverlauf-Animation */
-@keyframes colorFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+/* Welleneffekt für einzelne Buchstaben der Überschrift */
+h1 span {
+  display: inline-block;
+  animation: wave 1.5s infinite;
+  animation-delay: calc(var(--char-index) * 0.09s);
 }
 
-/* Optional: Klasse für farbigen Animationseffekt überall */
-.colorful-text {
-  background: linear-gradient(-45deg, #64b5f6, #1a237e, #8e24aa, #ff4081, #64b5f6);
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  animation: colorFlow 8s linear infinite;
+/* Keyframes für Welleneffekt */
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  20% { transform: translateY(-14px); }
+  40% { transform: translateY(7px); }
+  60% { transform: translateY(-7px); }
+  80% { transform: translateY(4px); }
 }
 
+/* Lila für h2 als Fallback für Browser ohne gradient-clip */
 h2 {
   color: #8e24aa;
 }
 
+/* Links */
 a {
-  color: #2196f3;
   text-decoration: none;
 }
 a:hover {
@@ -81,9 +78,9 @@ a:hover {
 }
 
 ul, li {
-  color: #fff;
+  color: inherit;
 }
 
 p {
-  color: #fff;
+  color: inherit;
 }
