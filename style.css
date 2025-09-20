@@ -9,7 +9,7 @@ body {
 h1 {
   color: #fff;
   background-image: url('meinbild.jpg');
-  background-size: 40% auto;         /* Bild leicht verkleinert */
+  background-size: 30% auto;         /* Bild leicht verkleinert */
   background-repeat: no-repeat;
   background-position: 80% 90px;     /* Bild weiter rechts und leicht unten */
   padding-top: 170px;                /* Viel Platz oben für vertikale Zentrierung */
