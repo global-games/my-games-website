@@ -5,7 +5,7 @@ body {
   margin: 2em;
 }
 
-/* Überschrift mit deinem Bild im Hintergrund */
+/* Überschrift mit deinem Bild im Hintergrund und Scrollbalken */
 h1 {
   color: #fff;
   background-image: url('meinbild.jpg');
@@ -19,7 +19,10 @@ h1 {
   box-shadow: none;
   letter-spacing: 2px;
   margin-bottom: 1.5em;
-  margin-left: 0;                    /* Ganz links starten */
+  margin-left: 0;
+  height: 200px;                     /* Feste Höhe für sichtbaren Scrollbereich */
+  overflow-y: auto;                  /* Vertikaler Scrollbalken */
+  scroll-behavior: smooth;           /* Weiches Scrollen */
 }
 
 /* Unterüberschriften lila */
