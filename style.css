@@ -17,7 +17,7 @@ h1 {
   padding-left: 2em;                 /* Überschrift nach links rücken */
   text-align: left;                  /* Text linksbündig */
   box-shadow: none;
-  letter-spacing: 2px;
+  letter-spacing: 5px;
   margin-bottom: 1.5em;
   margin-left: 0;
   height: 200px;                     /* Feste Höhe für sichtbaren Scrollbereich */
