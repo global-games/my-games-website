@@ -1,29 +1,62 @@
 body {
   background: #101729;
   color: #fff;
-  font-family: Arial, sans-serif;
-  margin: 2em;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
+/* Animiertes Bild */
+.header-image-container {
+  width: 330px;
+  height: 180px;
+  position: absolute;
+  top: 60px;
+  right: 6vw;
+  z-index: 5;
+  pointer-events: none;
+  /* Animation */
+  animation: imageSwing 7s ease-in-out infinite;
+  transform-origin: 60% 40%;
+}
+.header-image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 23px 60px 35px 70px;
+  box-shadow: 0 7px 32px #0008, 0 1.5px 8px #8e24aa66;
+  object-fit: cover;
+}
+
+@keyframes imageSwing {
+  0% { transform: rotate(-4deg) scale(1);}
+  8% { transform: rotate(1.5deg) scale(1.03);}
+  25% { transform: rotate(5deg) scale(1.04);}
+  37% { transform: rotate(2deg) scale(1.015);}
+  50% { transform: rotate(-3deg) scale(1);}
+  65% { transform: rotate(-2deg) scale(0.99);}
+  80% { transform: rotate(-6deg) scale(1);}
+  100% { transform: rotate(-4deg) scale(1);}
+}
+
+/* Überschrift */
 h1 {
   position: relative;
-  font-size: 4rem; /* Überschrift deutlich größer */
-  padding-top: 140px; /* minimal mehr Platz oben */
-  padding-bottom: 80px;
-  padding-left: 2em;
+  font-size: 4.2rem;
+  padding-top: 240px;        /* Überschrift weiter nach unten */
+  padding-bottom: 50px;
+  padding-left: 2.2em;
   text-align: left;
-  margin-top: 32px;   /* Überschrift nach unten verschoben */
-  margin-bottom: 70px; /* mehr Platz zum Text darunter */
+  margin-top: 38px;
+  margin-bottom: 85px;      /* Mehr Platz unter der Überschrift */
   margin-left: 0;
-  height: 180px;
-  overflow-y: auto;
-  scroll-behavior: smooth;
   letter-spacing: 2px;
-  background-image: url('meinbild.jpg');
-  background-repeat: no-repeat;
-  background-size: 40% auto;
-  background-position: 90% 40px;
-  z-index: 1;
+  min-height: 100px;
+  z-index: 10;
+  overflow-y: visible;
+  background: none;
+  user-select: none;
 }
 
 h1 span {
@@ -33,9 +66,9 @@ h1 span {
   background: linear-gradient(
     120deg,
     #1a237e 0%,
-    #8e24aa 40%,
-    #ff4081 80%,
-    #fff 95%,
+    #8e24aa 33%,
+    #1a237e 50%,
+    #ff4081 82%,
     #1a237e 100%
   );
   background-size: 300% 300%;
@@ -44,13 +77,14 @@ h1 span {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 2px 8px rgba(142,36,170,0.13));
   animation:
-    headlineColorFlow 3.6s ease-in-out infinite,
-    wave 1.5s infinite;
+    headlineColorFlow 4.6s ease-in-out infinite,
+    wave 1.8s infinite;
   animation-delay:
-    calc(var(--char-index) * 0.04s),
-    calc(var(--char-index) * 0.09s);
+    calc(var(--char-index) * 0.06s),
+    calc(var(--char-index) * 0.085s);
+  /* leichter Textschatten für Lesbarkeit */
+  filter: drop-shadow(0 2px 10px #111c);
 }
 
 @keyframes headlineColorFlow {
@@ -60,53 +94,107 @@ h1 span {
 }
 @keyframes wave {
   0%,100% { transform: translateY(0);}
-  15%     { transform: translateY(-15px);}
-  30%     { transform: translateY(8px);}
-  50%     { transform: translateY(-8px);}
+  15%     { transform: translateY(-16px);}
+  30%     { transform: translateY(9px);}
+  50%     { transform: translateY(-9px);}
   70%     { transform: translateY(6px);}
   85%     { transform: translateY(-4px);}
 }
 
-/* Auffälliger Farbverlauf für restlichen Text */
-h2, p, li, a {
-  background: linear-gradient(
-    100deg,
-    #1a237e 10%,
-    #8e24aa 40%,
-    #ff4081 70%,
-    #fff 95%
-  );
-  background-size: 300% 100%;
-  background-position: 0 0;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  animation: textColorfulFlow 7s ease-in-out infinite;
-  filter: drop-shadow(0 1px 6px #ff408155);
-}
-@keyframes textColorfulFlow {
-  0%   {background-position: 0% 0%;}
-  50%  {background-position: 100% 0%;}
-  100% {background-position: 0% 0%;}
+/* Textbereich unter dem Bild */
+.main-content {
+  position: relative;
+  background: #14151a;
+  border-radius: 30px;
+  max-width: 650px;
+  margin: 0 auto;
+  margin-top: 110px;     /* Weiter nach unten */
+  padding: 45px 32px 38px 32px;
+  box-shadow: 0 8px 40px #000a, 0 1.5px 6px #8e24aa33;
+  z-index: 3;
 }
 
 h2 {
   color: #8e24aa;
+  font-size: 2.1rem;
+  margin-bottom: 9px;
+  position: relative;
+}
+h2::after {
+  content: '';
+  display: block;
+  width: 54px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8e24aa, #ff4081, #1a237e);
+  margin-top: 8px;
+  animation: underlineMove 2.5s infinite alternate ease-in-out;
+}
+@keyframes underlineMove {
+  0% {width:54px;}
+  50% {width:90px;}
+  100% {width:54px;}
+}
+
+/* Text, Links und Liste: Kein Glanz, nur weiß mit sanftem Schatten */
+p, li, a {
+  color: #fff;
+  font-size: 1.18rem;
+  line-height: 1.7;
+  filter: drop-shadow(0 1px 2px #000c);
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  animation: none !important;
 }
 
 a {
-  text-decoration: none;
+  text-decoration: underline;
+  color: #ff4081;
+  transition: text-shadow 0.2s, color 0.2s;
 }
 a:hover {
-  color: #ff4081;
-  text-decoration: underline;
+  color: #fff;
+  text-shadow: 0 0 10px #ff4081, 0 0 4px #8e24aa;
+  background: none;
 }
 
-ul, li {
-  color: inherit;
+/* Moderner Button */
+.button-cta {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #8e24aa 25%, #ff4081 85%);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 10px #8e24aa44;
+  transition: background 0.25s, transform 0.15s, box-shadow 0.2s;
+}
+.button-cta:hover {
+  background: linear-gradient(90deg, #ff4081, #8e24aa 60%);
+  box-shadow: 0 6px 30px #ff408188, 0 1px 8px #8e24aa55;
+  transform: scale(1.06);
 }
 
-p {
-  color: inherit;
+/* Responsive Anpassung */
+@media (max-width: 900px) {
+  .header-image-container {
+    width: 230px;
+    top: 30px;
+    right: 3vw;
+  }
+  h1 {
+    font-size: 2.4rem;
+    padding-top: 120px;
+    margin-bottom: 50px;
+  }
+  .main-content {
+    padding: 24px 7vw 22px 7vw;
+    max-width: 98vw;
+  }
 }
