@@ -2,46 +2,72 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Individuelle Animations-Webseite</title>
+  <title>GLOBAL-GAMES | Spiele, Projekte & Community</title>
+  <meta name="description" content="Entdecke innovative Spiele, kreative Projekte und die Community von GLOBAL-GAMES. Jetzt loslegen und Teil der Bewegung werden!">
+  <meta name="keywords" content="Spiele, Games, Scratch, Projekte, Community, global-games, Online-Spiele, Kreativität, Programmieren, Coding, Lernen">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Stylesheet -->
+  <!-- Open Graph für Social Media -->
+  <meta property="og:title" content="GLOBAL-GAMES | Spiele, Projekte & Community">
+  <meta property="og:description" content="Entdecke innovative Spiele, kreative Projekte und die Community von GLOBAL-GAMES.">
+  <meta property="og:image" content="meinbild.jpg">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="style.css">
+  <link rel="canonical" href="https://global-games.github.io/">
 </head>
 <body>
-  <!-- Animiertes Bild rechts oben -->
+  <!-- Header mit Animation -->
+  <header class="site-header">
+    <div class="logo-anim">
+      <span class="g1">G</span><span class="g2">L</span><span class="g3">O</span><span class="g4">B</span><span class="g5">A</span><span class="g6">L</span>
+      <span class="minus">-</span>
+      <span class="g7">G</span><span class="g8">A</span><span class="g9">M</span><span class="g10">E</span><span class="g11">S</span>
+    </div>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="index.html" class="active">Startseite</a></li>
+        <li><a href="spiele.html">Spiele</a></li>
+        <li><a href="projekte.html">Projekte</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <!-- Animiertes Bild -->
   <div class="header-image-container">
-    <img src="meinbild.jpg" alt="Header Bild">
+    <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher">
   </div>
   
   <!-- Animierte Überschrift -->
-  <h1>Deine Moderne Überschrift</h1>
+  <h1>GLOBAL-GAMES</h1>
   
   <!-- Haupt-Content mit Abstand & Schwarzem Grund -->
   <div class="main-content">
-    <h2>Unterüberschrift</h2>
-    <p>Dies ist ein Beispieltext unter dem Bild. Der Bereich besitzt einen schwarzen Hintergrund, einen Schatten und ist weiter nach unten verschoben, damit das Bild nicht verdeckt wird.</p>
+    <h2>Willkommen bei GLOBAL-GAMES</h2>
+    <p>Dies ist die Plattform für Spiele, kreative Projekte und Austausch – powered by <strong>global-games</strong>. Entdecke, was wir gemeinsam erschaffen!</p>
     <ul>
-      <li>Liste mit moderner Optik</li>
-      <li>Keine Glanzeffekte, klar und lesbar</li>
+      <li>Community-getriebene Spiele und Projekte</li>
+      <li>Lerne, programmiere und teile deine Ideen</li>
+      <li>Werde Teil einer kreativen Gemeinschaft</li>
     </ul>
-    <a href="#">Ein moderner Link</a>
-    <br>
-    <button class="button-cta">Jetzt Starten</button>
+    <a class="button-cta" href="https://scratch.mit.edu/users/global-games/" target="_blank" rel="noopener">Zu unserem Scratch-Profil</a>
   </div>
   
-  <!-- Überschrift: Welleneffekt via JS -->
+  <!-- JS für Welleneffekt in Überschrift -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // Welleneffekt für h1
     const h1 = document.querySelector('h1');
-    if (!h1) return;
-    const text = h1.textContent;
-    h1.innerHTML = '';
-    [...text].forEach((char, i) => {
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.style.setProperty('--char-index', i);
-      h1.appendChild(span);
-    });
+    if (h1) {
+      const text = h1.textContent;
+      h1.innerHTML = '';
+      [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.setProperty('--char-index', i);
+        h1.appendChild(span);
+      });
+    }
   });
   </script>
 </body>
