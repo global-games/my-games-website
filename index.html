@@ -1,68 +1,200 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>GLOBAL-GAMES</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>GLOBAL-GAMES</h1>
-  <h2>Willkommen auf unserer Spiele-Website!</h2>
-  <p>Dies ist ein Beispieltext. Viel Spaß beim Erkunden. Hier können wiruns rund ums Haus bes jkkkkii werden schon zum ersten Platz tellt man sich einmalig und bequem von den ersten bis zur fertigen Seite aus der Sicht der Stadt nebenan und der Stadt nebenan ist eine große Stadt und die Figur bewegt und gibt eskein ehalb enN otemehrUn haben aufgrund von links und Bildern keine der Startseite ters tützung beimM anagement desStudiosun dder</p>
-  <a href="https://github.com/global-games/my-games-website">GitHub Repository</a>
-</body>
-</html>
-<script>
-window.onload = function() {
-  var h1 = document.querySelector('h1');
-  h1.scrollTop = h1.scrollHeight;
-};
-  </script>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Moderne Überschrift mit Farbeffekt</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <h1>Deine Moderne Überschrift</h1>
-  <h2>Unterüberschrift</h2>
-  <p>Das ist ein Beispieltext mit Glanzreflex. Der Effekt ist dezent und lenkt nicht vom Inhalt ab.</p>
-  <ul>
-    <li>Liste mit Glanz</li>
-    <li>Noch ein Punkt</li>
-  </ul>
-  <a href="#">Ein moderner Link</a>
+body {
+  background: #101729;
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
 
-  <!-- Wellen- und Farbeffekt für Überschrift: -->
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const h1 = document.querySelector('h1');
-    if (!h1) return;
-    const text = h1.textContent;
-    h1.innerHTML = '';
-    [...text].forEach((char, i) => {
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.style.setProperty('--char-index', i);
-      h1.appendChild(span);
-    });
-  });
-  </script>
-</body>
-    </html>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const h1 = document.querySelector('h1');
-  if (!h1) return;
-  const text = h1.textContent;
-  h1.innerHTML = '';
-  [...text].forEach((char, i) => {
-    const span = document.createElement('span');
-    span.textContent = char;
-    span.style.setProperty('--char-index', i);
-    h1.appendChild(span);
-  });
-});
-</script>
+/* Animiertes Bild */
+.header-image-container {
+  width: 330px;
+  height: 180px;
+  position: absolute;
+  top: 60px;
+  right: 6vw;
+  z-index: 5;
+  pointer-events: none;
+  /* Animation */
+  animation: imageSwing 7s ease-in-out infinite;
+  transform-origin: 60% 40%;
+}
+.header-image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 23px 60px 35px 70px;
+  box-shadow: 0 7px 32px #0008, 0 1.5px 8px #8e24aa66;
+  object-fit: cover;
+}
+
+@keyframes imageSwing {
+  0% { transform: rotate(-4deg) scale(1);}
+  8% { transform: rotate(1.5deg) scale(1.03);}
+  25% { transform: rotate(5deg) scale(1.04);}
+  37% { transform: rotate(2deg) scale(1.015);}
+  50% { transform: rotate(-3deg) scale(1);}
+  65% { transform: rotate(-2deg) scale(0.99);}
+  80% { transform: rotate(-6deg) scale(1);}
+  100% { transform: rotate(-4deg) scale(1);}
+}
+
+/* Überschrift */
+h1 {
+  position: relative;
+  font-size: 4.2rem;
+  padding-top: 240px;        /* Überschrift weiter nach unten */
+  padding-bottom: 50px;
+  padding-left: 2.2em;
+  text-align: left;
+  margin-top: 38px;
+  margin-bottom: 85px;      /* Mehr Platz unter der Überschrift */
+  margin-left: 0;
+  letter-spacing: 2px;
+  min-height: 100px;
+  z-index: 10;
+  overflow-y: visible;
+  background: none;
+  user-select: none;
+}
+
+h1 span {
+  display: inline-block;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(
+    120deg,
+    #1a237e 0%,
+    #8e24aa 33%,
+    #1a237e 50%,
+    #ff4081 82%,
+    #1a237e 100%
+  );
+  background-size: 300% 300%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation:
+    headlineColorFlow 4.6s ease-in-out infinite,
+    wave 1.8s infinite;
+  animation-delay:
+    calc(var(--char-index) * 0.06s),
+    calc(var(--char-index) * 0.085s);
+  /* leichter Textschatten für Lesbarkeit */
+  filter: drop-shadow(0 2px 10px #111c);
+}
+
+@keyframes headlineColorFlow {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+@keyframes wave {
+  0%,100% { transform: translateY(0);}
+  15%     { transform: translateY(-16px);}
+  30%     { transform: translateY(9px);}
+  50%     { transform: translateY(-9px);}
+  70%     { transform: translateY(6px);}
+  85%     { transform: translateY(-4px);}
+}
+
+/* Textbereich unter dem Bild */
+.main-content {
+  position: relative;
+  background: #14151a;
+  border-radius: 30px;
+  max-width: 650px;
+  margin: 0 auto;
+  margin-top: 110px;     /* Weiter nach unten */
+  padding: 45px 32px 38px 32px;
+  box-shadow: 0 8px 40px #000a, 0 1.5px 6px #8e24aa33;
+  z-index: 3;
+}
+
+h2 {
+  color: #8e24aa;
+  font-size: 2.1rem;
+  margin-bottom: 9px;
+  position: relative;
+}
+h2::after {
+  content: '';
+  display: block;
+  width: 54px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8e24aa, #ff4081, #1a237e);
+  margin-top: 8px;
+  animation: underlineMove 2.5s infinite alternate ease-in-out;
+}
+@keyframes underlineMove {
+  0% {width:54px;}
+  50% {width:90px;}
+  100% {width:54px;}
+}
+
+/* Text, Links und Liste: Kein Glanz, nur weiß mit sanftem Schatten */
+p, li, a {
+  color: #fff;
+  font-size: 1.18rem;
+  line-height: 1.7;
+  filter: drop-shadow(0 1px 2px #000c);
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  animation: none !important;
+}
+
+a {
+  text-decoration: underline;
+  color: #ff4081;
+  transition: text-shadow 0.2s, color 0.2s;
+}
+a:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #ff4081, 0 0 4px #8e24aa;
+  background: none;
+}
+
+/* Moderner Button */
+.button-cta {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #8e24aa 25%, #ff4081 85%);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 10px #8e24aa44;
+  transition: background 0.25s, transform 0.15s, box-shadow 0.2s;
+}
+.button-cta:hover {
+  background: linear-gradient(90deg, #ff4081, #8e24aa 60%);
+  box-shadow: 0 6px 30px #ff408188, 0 1px 8px #8e24aa55;
+  transform: scale(1.06);
+}
+
+/* Responsive Anpassung */
+@media (max-width: 900px) {
+  .header-image-container {
+    width: 230px;
+    top: 30px;
+    right: 3vw;
+  }
+  h1 {
+    font-size: 2.4rem;
+    padding-top: 120px;
+    margin-bottom: 50px;
+  }
+  .main-content {
+    padding: 24px 7vw 22px 7vw;
+    max-width: 98vw;
+  }
+}
