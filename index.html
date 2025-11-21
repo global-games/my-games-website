@@ -28,14 +28,16 @@
         <li><a href="spiele.html">Spiele</a></li>
         <li><a href="projekte.html">Projekte</a></li>
         <li><a href="community.html">Community</a></li>
+        <li><a href="contests.html">My contests</a></li> <!-- NEU -->
         <li><a href="kontakt.html">Kontakt</a></li>
+        <li><a href="more.html">…</a></li> <!-- Platz für weitere Unterseiten -->
       </ul>
     </nav>
   </header>
   
   <!-- Animiertes Bild -->
   <div class="header-image-container">
-    <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher">
+    <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher" class="eyecatcher-img">
   </div>
   
   <!-- Animierte Überschrift -->
@@ -54,21 +56,6 @@
   </div>
   
   <!-- JS für Welleneffekt in Überschrift -->
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // Welleneffekt für h1
-    const h1 = document.querySelector('h1');
-    if (h1) {
-      const text = h1.textContent;
-      h1.innerHTML = '';
-      [...text].forEach((char, i) => {
-        const span = document.createElement('span');
-        span.textContent = char;
-        span.style.setProperty('--char-index', i);
-        h1.appendChild(span);
-      });
-    }
-  });
-  </script>
+  <script src="wave-title.js"></script>
 </body>
 </html>
