@@ -1,4 +1,3 @@
-/* Grund-Layout und Farben */
 body {
   background: #101729;
   color: #fff;
@@ -76,6 +75,7 @@ body {
   80% { transform: translateY(2px);}
 }
 
+/* Menü mit neuen Einträgen */
 .nav-menu ul {
   list-style: none;
   display: flex;
@@ -105,12 +105,12 @@ body {
   .logo-anim { font-size: 1.3rem;}
 }
 
-/* Animiertes, großes Bild rechts oben */
+/* Header-Bild deutlich weiter unten */
 .header-image-container {
   width: 440px;
   height: 240px;
   position: absolute;
-  top: 110px;
+  top: 220px;  /* deutlich nach unten verschoben */
   right: 4vw;
   z-index: 5;
   pointer-events: none;
@@ -120,7 +120,7 @@ body {
 .header-image-container img {
   width: 100%;
   height: 100%;
-  border-radius: 0; /* Kein Schatten, kein Rahmen */
+  border-radius: 0;
   object-fit: cover;
   box-shadow: none;
   border: none;
@@ -142,7 +142,7 @@ h1 {
   font-size: 4.2rem;
   padding-top: 270px;
   padding-bottom: 50px;
-  padding-left: 1.5em; /* leicht nach links */
+  padding-left: 1.5em;
   text-align: left;
   margin-top: 30px;
   margin-bottom: 80px;
@@ -205,6 +205,32 @@ h1 span {
   padding: 45px 32px 38px 32px;
   box-shadow: 0 8px 40px #000a, 0 1.5px 6px #8e24aa33;
   z-index: 3;
+}
+
+/* News Box */
+.news-section {
+  background: linear-gradient(100deg, #8e24aa22 10%, #ff408138 90%);
+  border-radius: 18px;
+  box-shadow: 0 2px 12px #8e24aa33;
+  padding: 19px 22px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  color: #fff;
+  font-size: 1.15rem;
+  width: 100%;
+  position: relative;
+  animation: newsGradient 6s linear infinite alternate;
+}
+@keyframes newsGradient {
+  0% { background-position: 0 0;}
+  100% { background-position: 100% 0;}
+}
+.news-section h3 {
+  margin: 0;
+  color: #ff4081;
+  font-size: 1.33rem;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 h2 {
@@ -294,7 +320,7 @@ p, li {
   .header-image-container {
     width: 320px;
     height: 160px;
-    top: 110px;
+    top: 180px; /* mit nach unten gezogenem Wert */
     right: 2vw;
   }
   .main-content {
@@ -310,7 +336,7 @@ p, li {
     width: 90vw;
     height: 110px;
     right: 5vw;
-    top: 80px;
+    top: 130px; /* auch weiter nach unten mobil */
   }
   .main-content {
     margin-top: 60px;
