@@ -4,14 +4,8 @@
   <meta charset="UTF-8">
   <title>GLOBAL-GAMES | Games, Projects & Community</title>
   <meta name="description" content="Discover innovative games, creative projects, and the community of GLOBAL-GAMES. Join and be part of the movement!">
-  <meta name="keywords" content="Games, Scratch, Projects, Community, global-games, Online-Games, Creativity, Programming, Coding, Learning">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="og:title" content="GLOBAL-GAMES | Games, Projects & Community">
-  <meta property="og:description" content="Discover games, projects, and the vibrant community of GLOBAL-GAMES.">
-  <meta property="og:image" content="meinbild.jpg">
-  <meta property="og:type" content="website">
   <link rel="stylesheet" href="style-gradient.css">
-  <link rel="canonical" href="https://global-games.github.io/">
 </head>
 <body>
   <header class="site-header">
@@ -23,46 +17,47 @@
     <nav class="nav-menu">
       <ul>
         <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="spiele.html">Games</a></li>
-        <li><a href="projekte.html">Projects</a></li>
-        <li><a href="community.html">Community</a></li>
         <li><a href="contests.html">My Contests</a></li>
-        <li><a href="comingsoon.html">Coming Soon</a></li>
-        <li><a href="scratchstats.html">Scratchstats</a></li>
-        <li><a href="kontakt.html">Contact</a></li>
+        <li><a href="comingsoon.html">Coming soon</a></li>
       </ul>
     </nav>
   </header>
-
   <div class="header-image-container">
-    <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher" class="eyecatcher-img">
+    <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher">
   </div>
-  
   <h1>GLOBAL-GAMES</h1>
-  
   <div class="main-content">
     <h2>Welcome to GLOBAL-GAMES!</h2>
-    <!-- News-Bereich -->
     <div class="news-section">
       <h3>News</h3>
       <ul>
         <li>🎉 New contest launched! Vote now for your favorite game in <a href="contests.html">My Contests</a>.</li>
-        <li>🚀 "Coming Soon": Get ready for unique community tools & more Scratch features!</li>
-        <li>📊 The fresh <a href="scratchstats.html">Scratchstats</a> page is online – check your Scratch game stats easily.</li>
+        <li>🚀 Stay tuned: Exclusive features coming soon!</li>
       </ul>
     </div>
-    
     <p>This is your platform for games, creative projects, and exciting contests by <strong>global-games</strong>. Discover, participate, and connect!</p>
     <ul>
-      <li>Vote here for your favorite games of the contest</li>
-      <li>Get notifications for the contest and my games</li>
-      <li>Escape my website and learn more about me</li>
+      <li>Vote here for your favorite games of the contest!</li>
+      <li>Get notifications for global-games contests and projects.</li>
+      <li>Learn more about the community.</li>
     </ul>
-    <!-- Englischer Button! -->
     <a class="button-cta" href="https://scratch.mit.edu/users/global-games/" target="_blank" rel="noopener">Visit our Scratch Profile</a>
   </div>
-
-  <!-- Welleneffekt für h1 -->
-  <script src="wave-title.js"></script>
+  <script>
+  // Welleneffekt für h1
+  document.addEventListener("DOMContentLoaded", function () {
+    const h1 = document.querySelector('h1');
+    if (h1) {
+      const text = h1.textContent;
+      h1.innerHTML = '';
+      [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.setProperty('--char-index', i);
+        h1.appendChild(span);
+      });
+    }
+  });
+  </script>
 </body>
 </html>
