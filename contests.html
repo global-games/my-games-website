@@ -263,6 +263,28 @@
         <a href="datenschutzerklärung.html" target="_blank">Datenschutzerklärung</a>
     </p>
 </footer>
+<!-- Datenschutz / Cookie-Banner -->
+<div id="cookie-banner">
+  <p>
+    Diese Webseite verwendet <strong>keine Cookies</strong>.  
+    Zur Vermeidung mehrfacher Abstimmungen wird jedoch die <strong>IP-Adresse</strong> gespeichert.  
+    Mehr Infos findest du in unserer <a href="privacy.html" target="_blank">Datenschutzerklärung</a>.
+  </p>
+  <button id="accept-cookies">Akzeptieren</button>
+</div>
+
+<script>
+  // Banner ausblenden, falls bereits akzeptiert
+  if (localStorage.getItem("cookiesAccepted") === "true") {
+    document.getElementById("cookie-banner").style.display = "none";
+  }
+
+  // Beim Klick auf "Akzeptieren"
+  document.getElementById("accept-cookies").addEventListener("click", function() {
+    localStorage.setItem("cookiesAccepted", "true");
+    document.getElementById("cookie-banner").style.display = "none";
+  });
+</script>
 
 </body>
 </html>
