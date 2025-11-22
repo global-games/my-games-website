@@ -3,39 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>My Contests | GLOBAL-GAMES</title>
-  <meta name="description" content="Vote for up to 3 of your favorite games!">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
   <style>
-    body {background: #101729;}
-    .main-content {max-width: 900px;}
-    .vote-grid {display: flex; flex-wrap: wrap; gap: 22px;}
-    .vote-card {
-      background: linear-gradient(120deg,#1a237e 7%,#8e24aa 50%,#ff4081 93%);
-      color: #fff;
-      border-radius: 22px;
-      box-shadow: 0 2px 14px #8e24aa77;
-      width: 210px; min-width:180px; min-height:290px; padding: 10px;
-      display: flex; flex-direction: column; align-items: center;
-      transition: box-shadow 0.23s;
-      border: 2.5px solid #240c5c;
-      opacity: 0.91;
+    .vote-header {text-align:center; margin-bottom:12px;}
+    .vote-title-gradient {
+      font-size:2.2rem;
+      font-weight:800;
+      letter-spacing:2px;
+      background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
+      background-size:210% 110%;
+      background-position: 0 0;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      animation: textColorfulFlow 7s ease-in-out infinite;
     }
-    .vote-card.selected { box-shadow: 0 0 36px #8e24aa99; opacity: 1; border:3.5px solid #ff4081;}
-    .vote-img {width: 140px; height: 140px;object-fit:cover; border-radius:16px;margin-bottom:10px;}
-    .vote-title {margin: 7px 0 10px;font-weight:bold;font-size:1.13rem;text-align:center;}
-    .vote-info {font-size:0.98rem;text-align:center;color: #fff3;}
-    .vote-select {margin: 0 0 4px 0;}
-    .stats-bar {height: 19px; border-radius: 14px; margin: 7px 0 11px;background:#290f5f;}
-    .stats-bar-inner {height: 100%; border-radius: 14px;background:linear-gradient(90deg, #8e24aa 10%, #ff4081 84%);}
-    .vote-submit {display:block;margin:19px auto 0 auto;}
-    .vote-submit[disabled] {opacity:0.55; filter:grayscale(60%);}
-    .chart-section {margin:30px auto;max-width:790px;}
-    .chart-bar-wrap {position:relative;display:flex;align-items:center;margin-bottom:6px;}
-    .chart-bar-label {min-width:120px; font-size:0.97rem;}
-    .chart-bar {height:19px; border-radius:14px; background:#1a237e; box-shadow:0 1px 4px #8e24aa44;}
+    .vote-desc {text-align:center; margin-bottom:26px; font-size:1.17rem; color:#fff;}
+    .vote-grid {display:flex;flex-wrap:wrap;gap:22px;justify-content:center;}
+    .vote-card {background:linear-gradient(120deg,#1a237e 7%,#8e24aa 57%,#ff4081 93%);
+      color:#fff;border-radius:22px;box-shadow:0 2px 14px #8e24aa77;
+      width:210px; min-width:180px; min-height:290px; padding:10px;display:flex;flex-direction:column;align-items:center;transition:box-shadow 0.23s; border:2.5px solid #240c5c; opacity:0.91; }
+    .vote-card.selected { box-shadow:0 0 36px #8e24aa99; opacity:1; border:3.5px solid #ff4081;}
+    .vote-img {width:140px;height:140px;object-fit:cover;border-radius:16px;margin-bottom:10px;}
+    .vote-title {margin:7px 0 10px;font-weight:bold;font-size:1.13rem;text-align:center;}
+    .vote-info {font-size:0.98rem;text-align:center;color:#fff3;}
+    .vote-select {margin:0 0 8px 0;}
+    .stats-bar {display:none;}
+    .vote-submit {display:block;margin:29px auto 0 auto;}
+    .vote-submit[disabled] {opacity:0.55;filter:grayscale(60%);}
+    .chart-section {margin:30px auto 0 auto;max-width:790px;}
+    .chart-bar-wrap {position:relative;display:flex;align-items:center;margin-bottom:8px;}
+    .chart-bar-label {min-width:120px; font-size:1.05rem;color:#fff;}
+    .chart-bar {height:22px; border-radius:14px;background:#1a237e; box-shadow:0 1px 4px #8e24aa44;}
     .chart-bar-inner {height:100%; border-radius:14px;background:linear-gradient(90deg,#8e24aa,#ff4081);}
-    .chart-val {margin-left:12px;font-weight:500;color:#fff;}
+    .chart-val {margin-left:12px;font-weight:600;color:#fff;}
   </style>
 </head>
 <body>
@@ -54,90 +54,91 @@
     </nav>
   </header>
   <div class="main-content">
-    <h2>Vote for up to <span style="color:#ff4081">3</span> favorites!</h2>
+    <div class="vote-header">
+      <div class="vote-title-gradient">Vote for up to 3 favorites!</div>
+      <div style="margin:0.7em 0 0.7em 0;color:#fff; font-size:1.07rem;">Chrismas contest 2025 - by global-games</div>
+    </div>
     <div class="vote-grid" id="voteGrid"></div>
     <button class="button-cta vote-submit" id="submitVote" disabled>Submit Vote</button>
-    <div class="chart-section" id="chartSection"></div>
+    <div class="chart-section" id="chartSection" style="display:none"></div>
   </div>
   <script>
-    // OPTION DATA: Replace titles/images as needed!
     const options = Array.from({length:20}, (_,i) => ({
       id:"vote"+(i+1),
-      title:"Option "+(i+1),
-      img:"option"+(i+1)+".jpg", // IMAGES: option1.jpg ... option20.jpg
-      info:"Game "+(i+1)
+      title:"Game "+(i+1),
+      img:"option"+(i+1)+".jpg",
+      info:"Awesome entry "+(i+1)
     }));
-    // Voting statistics kept in localStorage
-    let stats = JSON.parse(localStorage.getItem("globalGames_stats")) || Array(options.length).fill(0);
-    // Prevent multiple votes per browser (per IP only with server backend)
-    let voted = localStorage.getItem("globalGames_voted") === "yes";
-
-    // Build cards
-    const grid = document.getElementById("voteGrid");
+    let stats = Array(options.length).fill(0);
+    let voted=false, selected=[];
+    const grid=document.getElementById("voteGrid");
     options.forEach((opt,idx)=>{
-      let card = document.createElement("div");
-      card.className = "vote-card";
-      card.id = opt.id;
-      card.innerHTML = `
+      let card=document.createElement("div");
+      card.className="vote-card";
+      card.id=opt.id;
+      card.innerHTML=`
         <img src="${opt.img}" alt="${opt.title}" class="vote-img" onerror="this.style.opacity=0.2">
         <div class="vote-title">${opt.title}</div>
         <div class="vote-info">${opt.info}</div>
-        <input type="checkbox" class="vote-select" id="vote_check_${idx}" ${voted?"disabled":""}>
-        <div class="stats-bar">
-          <div class="stats-bar-inner" style="width:${stats[idx]/(Math.max(...stats,1))*100}%"></div>
-        </div>`;
+        <input type="checkbox" class="vote-select" id="vote_check_${idx}">
+        <div class="stats-bar"><div class="stats-bar-inner"></div></div>`;
       grid.appendChild(card);
     });
-
-    let selected = [];
-    let selects = grid.querySelectorAll('.vote-select');
+    let selects=grid.querySelectorAll('.vote-select');
     selects.forEach((box,idx)=>{
-      box.addEventListener('change', function(){
+      box.addEventListener('change',function(){
         if(this.checked){
-          if(selected.length<3){ selected.push(idx); grid.children[idx].classList.add("selected"); }
-          else{ this.checked=false;}
+          if(selected.length<3){selected.push(idx);grid.children[idx].classList.add("selected");}
+          else{this.checked=false;}
         }else{
-          selected = selected.filter(x=>x!==idx); grid.children[idx].classList.remove("selected");
+          selected=selected.filter(x=>x!==idx);grid.children[idx].classList.remove("selected");
         }
-        document.getElementById("submitVote").disabled = selected.length===0 || voted;
+        document.getElementById("submitVote").disabled=selected.length===0||voted;
       });
     });
 
-    // Voting logic
-    document.getElementById("submitVote").onclick = function(){
-      if(voted || selected.length===0) return;
-      selected.forEach(i=>stats[i]++);
-      localStorage.setItem("globalGames_stats", JSON.stringify(stats));
-      localStorage.setItem("globalGames_voted","yes");
-      voted = true;
-      for(let el of selects){ el.disabled = true; }
-      document.getElementById("submitVote").disabled = true;
-      showChart();
+    // API endpoint – PASSE AN DEINEN HOSTER AN!
+    const API="https://deinserver.example.com/vote"; // z.B. Netlify/Vercel/Heroku
+
+    document.getElementById("submitVote").onclick=function(){
+      if(voted||selected.length===0) return;
+      fetch(API,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({picks:selected.map(x=>x+1)})
+      })
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.ok){
+          voted=true;
+          stats=d.stats;
+          for(let el of selects){el.disabled=true;}
+          document.getElementById("submitVote").disabled=true;
+          showChart();
+        }else{
+          alert("You have already voted or something went wrong!");
+        }
+      });
       grid.querySelectorAll('.vote-card').forEach(el=>el.classList.remove("selected"));
     };
-    if(voted) {
-      selects.forEach(box=>box.disabled=true);
-      document.getElementById("submitVote").disabled = true;
-    }
 
-    // Results Chart
     function showChart(){
-      let sum = stats.reduce((a,b)=>a+b,0);
-      let chart = "<h2>Live results</h2>";
+      document.getElementById("chartSection").style.display="";
+      let sum=stats.reduce((a,b)=>a+b,0);
+      let chart="<h2 style='background:linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'>Live results</h2>";
       options.forEach((opt,idx)=>{
-        let val = stats[idx]||0;
+        let val=stats[idx]||0;
         let prc = sum? Math.round(val/sum*100):0;
         chart += `<div class="chart-bar-wrap">
           <span class="chart-bar-label">${opt.title}</span>
-          <div class="chart-bar" style="width:200px;">
+          <div class="chart-bar" style="width:220px;">
             <div class="chart-bar-inner" style="width:${prc*2}px"></div>
           </div>
           <span class="chart-val">${val} (${prc}%)</span>
         </div>`;
       });
-      document.getElementById("chartSection").innerHTML = chart;
+      document.getElementById("chartSection").innerHTML=chart;
     }
-    showChart();
   </script>
 </body>
 </html>
