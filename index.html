@@ -7,188 +7,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
   <style>
-    body { background: #101729 !important; margin: 0; }
+    body { background: #101729!important; margin: 0; }
     .site-header {
-      width: 100vw;
-      min-width: 100vw;
+      width: 100vw; min-width: 100vw;
       background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
       box-shadow: 0 6px 24px #8e24aa59;
-      position: fixed;
-      left: 0; top: 0;
-      z-index: 2000;
-      min-height: 84px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      position: fixed; left: 0; top: 0; z-index: 2000;
+      min-height: 87px; display: flex; flex-direction: column; align-items: center;
       animation: headerGradient 8s linear infinite alternate;
-      border-bottom: 3px solid #8e24aa;
-      padding-bottom: 12px;
+      border-bottom: 3px solid #8e24aa; padding-bottom: 16px;
     }
-    @keyframes headerGradient {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
+    @keyframes headerGradient { 0%{background-position:0% 50%}100%{background-position:100% 50%} }
     .logo-anim {
-      font-size: 2.1rem;
-      font-weight: bold;
-      letter-spacing: 0.14em;
-      margin: 1.2em 0 0.1em 0;
-      display: flex;
-      gap: 0.07em;
+      font-size: 2.09rem; font-weight: bold; letter-spacing: .14em;
+      margin: 1.2em 0 0.1em 0; display: flex; gap: 0.07em;
       user-select: none;
     }
     .nav-menu ul {
-      list-style: none;
-      display: flex;
-      gap: 1.2em;
-      margin: 0;
-      padding: 0;
-      justify-content: center;
-      align-items: center;
+      list-style: none; display: flex; gap: 1.2em; margin: 0; padding: 0;
+      justify-content: center; align-items: center;
     }
     .nav-menu a {
-      text-decoration: none;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.09rem;
-      padding: 11px 28px;
-      border-radius: 30px;
-      border: none;
+      text-decoration: none; color: #fff; font-weight: 600; font-size: 1.09rem;
+      padding: 11px 28px; border-radius: 30px; border: none;
       background: linear-gradient(90deg, #1a237e 10%, #8e24aa 75%, #ff4081 100%);
-      transition: background 0.18s, transform 0.13s, box-shadow 0.2s;
+      transition: background .18s, transform .13s, box-shadow .2s;
       box-shadow: 0 2px 14px #8e24aa48;
-      display: inline-block;
-      margin-top: 4px;
+      display: inline-block; margin-top: 4px;
     }
     .nav-menu a.active, .nav-menu a:hover {
       background: linear-gradient(90deg, #ff4081, #8e24aa 65%, #1a237e 100%);
-      color: #fff;
-      box-shadow: 0 6px 22px #ff4081b6;
+      color: #fff; box-shadow: 0 6px 22px #ff4081b6;
       transform: scale(1.08);
     }
-    /* Logo wave effect loads from wave-title.js */
-    h1 {
-      font-size: 3rem;
-      margin-top: 110px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      background: none !important;
-      text-align: center;
-      user-select: none;
-      width: 100%;
+    .header-image-container {
+      width: 182px; height: 105px;
+      display: flex; justify-content: center; margin: 110px auto 28px auto;
+      animation: imageSwing 7s ease-in-out infinite;
+      transform-origin: 60% 40%;
+      z-index: 12;
     }
-    /* Content-Box with animated gradient text & background */
+    .header-image-container img {
+      width: 100%; height: 100%; border-radius: 13px; object-fit: cover;
+      box-shadow: 0 7px 30px #8e24aa77;
+    }
+    @keyframes imageSwing {
+      0% {transform: rotate(-2deg) scale(1);}
+      8% {transform: rotate(1.5deg) scale(1.05);}
+      25% {transform: rotate(5deg) scale(1.07);}
+      37% {transform: rotate(2deg) scale(1.02);}
+      50% {transform: rotate(-3deg) scale(1);}
+      65% {transform: rotate(-2deg) scale(.99);}
+      80% {transform: rotate(-6deg) scale(1);}
+      100% {transform: rotate(-2deg) scale(1);}
+    }
+    h1 {
+      font-size: 3rem; font-weight: 900; letter-spacing: 1.5px;
+      background: none!important; text-align: center; user-select: none; width: 100%;
+      margin-top: 0;
+      margin-bottom: 36px;
+    }
     .main-content {
       background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
-      border-radius: 30px;
-      max-width: 680px;
-      margin: 0 auto;
-      margin-top: 70px;
-      margin-bottom: 40px;
-      padding: 38px 28px 38px 28px;
+      border-radius: 30px; max-width: 700px; margin: 0 auto;
+      margin-top: 34px; margin-bottom: 42px; padding: 38px 28px 38px 28px;
       box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
-      z-index: 11;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .animated-gradient {
-      background: linear-gradient(90deg, #1a237e, #8e24aa, #ff4081);
-      background-size:240% 100%;
-      background-position: 0 0;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; color:transparent;
-      animation: animateGradient 8s ease-in-out infinite alternate;
-      font-size: 1.35rem;
-      font-weight: 500;
-      margin: 0;
-      margin-bottom: 18px;
-      text-align: center;
-    }
-    @keyframes animateGradient {
-      0%   {background-position:0% 0%;}
-      100% {background-position:100% 0%;}
+      z-index: 11; position: relative;
+      display: flex; flex-direction: column; align-items: center;
     }
     .content-box {
       background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
-      border-radius: 20px;
-      box-shadow: 0 4px 18px #8e24aa66;
-      margin-bottom: 22px;
-      padding: 25px 17px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 1.25rem;
+      border-radius: 20px; box-shadow: 0 4px 18px #8e24aa66; margin-bottom: 22px;
+      padding: 25px 17px; display: flex; flex-direction: column; align-items: center;
+      font-size: 1.35rem;
+    }
+    .big-gradient {
+      background: linear-gradient(90deg, #1a237e, #8e24aa, #ff4081);
+      background-size:240% 100%; background-position: 0 0;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip:text; color:transparent;
+      animation: animateGradient 8s ease-in-out infinite alternate;
+      font-size: 1.5rem; font-weight: 600;
+      text-align: center; margin-bottom: 18px;
     }
     .content-box ul {margin-top: 10px;}
     .content-box li {
-      margin-bottom: 12px;
-      font-size: 1.19em;
+      margin-bottom: 17px; font-size: 1.29em;
       background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
       background-size:210% 110%;
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-clip:text; color:transparent;
-      animation: animateGradient 8s ease-in-out infinite alternate;
+      background-clip:text; color:transparent; animation: animateGradient 3s linear infinite alternate;
     }
     .scratch-btn {
-      padding: 15px 40px;
-      font-size: 1.15rem;
-      border-radius: 32px;
-      font-weight: 700;
-      color: #fff;
-      border: none;
-      margin: 0 auto;
-      margin-top: 38px;
+      padding: 15px 40px; font-size: 1.15rem; border-radius: 32px; font-weight: 700;
+      color: #fff; border: none; margin: 0 auto; margin-top: 38px;
       background: linear-gradient(90deg,#1a237e,#8e24aa 57%,#ff4081 93%);
-      background-size: 210% 100%;
-      animation: animateGradient 3s linear infinite alternate;
-      box-shadow: 0 4px 22px #8e24aa33;
-      transition: background 0.22s, transform 0.17s;
-      cursor: pointer;
-      display: block;
-      text-decoration:none;
+      background-size: 210% 100%; animation: animateGradient 3s linear infinite alternate;
+      box-shadow: 0 4px 22px #8e24aa33; transition: background .22s, transform .17s; cursor: pointer; display: block; text-decoration:none;
     }
     .scratch-btn:hover {
       background: linear-gradient(90deg,#ff4081 7%,#8e24aa 80%,#1a237e 97%);
       transform: scale(1.08);
     }
-    .header-image-container {
-      width: 156px;
-      height: 90px;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      margin: 8px auto 16px auto;
-      top:0;
-      left:0;
-      animation: imageSwing 7s ease-in-out infinite;
-      transform-origin: 60% 40%;
-      z-index: 5;
-    }
-    .header-image-container img {
-      width: 100%;
-      height: 100%;
-      border-radius: 13px;
-      object-fit: cover;
-      box-shadow: 0 7px 30px #8e24aa77;
-    }
-    @keyframes imageSwing {
-      0% { transform: rotate(-2deg) scale(1);}
-      8% { transform: rotate(1.5deg) scale(1.05);}
-      25% { transform: rotate(5deg) scale(1.07);}
-      37% { transform: rotate(2deg) scale(1.02);}
-      50% { transform: rotate(-3deg) scale(1);}
-      65% { transform: rotate(-2deg) scale(0.99);}
-      80% { transform: rotate(-6deg) scale(1);}
-      100% { transform: rotate(-2deg) scale(1);}
-    }
-    @media (max-width:900px) {
-      .main-content {max-width:98vw;}
-    }
+    @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
+    @media (max-width:900px) {.main-content{max-width:98vw;} }
     @media (max-width:700px) {
       h1 {font-size: 2.1rem;}
-      .main-content {margin-top:110px;}
+      .main-content {margin-top:120px;}
       .header-image-container {height:55px;width:94px;}
       .content-box {font-size:1.09rem;}
       .scratch-btn {font-size:1rem;padding:13px 23px;}
@@ -211,13 +136,9 @@
   </div>
   <h1 id="page-global-games">GLOBAL-GAMES</h1>
   <div class="main-content">
-    <div class="animated-gradient" style="margin-bottom:9px;font-size:2.1rem;font-weight:700;">
-      Select up to three projects
-    </div>
-    <div class="animated-gradient subtext">Chrismas contest 2025 - by global-games</div>
     <div class="content-box">
-      <div class="animated-gradient" style="font-size:1.4em;font-weight:600;">
-        This is your platform for games, creative projects, and exciting contests by global-games.
+      <div class="big-gradient">
+        This is your platform for games, creative projects, and exciting contests by global-games.<br>
         Discover, participate, and connect!
       </div>
       <ul>
