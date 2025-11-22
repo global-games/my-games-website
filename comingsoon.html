@@ -6,27 +6,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
   <style>
-    body { background: #101729 !important; }
-    h2.headline {
-      font-size:2.1rem;
-      background:linear-gradient(90deg, #1a237e, #8e24aa , #ff4081);
-      background-size:210% 110%;background-position: 0 0;
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-      animation:textColorfulFlow 8s ease-in-out infinite;
-      margin-bottom: 32px;
+    body { background: #101729!important; margin: 0; }
+    .site-header {
+      width: 100vw; min-width: 100vw;
+      background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
+      box-shadow: 0 6px 24px #8e24aa59;
+      position: fixed; left: 0; top: 0; z-index: 2000;
+      min-height: 87px; display: flex; flex-direction: column; align-items: center;
+      animation: headerGradient 8s linear infinite alternate;
+      border-bottom: 3px solid #8e24aa; padding-bottom: 16px;
     }
-    .news-list {display:flex;flex-direction:column;gap:16px;margin:0 auto;max-width:570px;}
-    .news-card {background:linear-gradient(100deg, #1a237e 9%, #8e24aa 70%, #ff4081 92%);
-      color:#fff;padding:18px 22px;border-radius:18px;box-shadow:0 2px 10px #8e24aa77;}
+    @keyframes headerGradient { 0%{background-position:0% 50%}100%{background-position:100% 50%} }
+    .logo-anim {
+      font-size: 2.09rem; font-weight: bold; letter-spacing: .14em;
+      margin: 1.2em 0 0.1em 0; display: flex; gap: 0.07em;
+      user-select: none;
+    }
+    .nav-menu ul {
+      list-style: none; display: flex; gap: 1.2em; margin: 0; padding: 0;
+      justify-content: center; align-items: center;
+    }
+    .nav-menu a {
+      text-decoration: none; color: #fff; font-weight: 600; font-size: 1.09rem;
+      padding: 11px 28px; border-radius: 30px; border: none;
+      background: linear-gradient(90deg, #1a237e 10%, #8e24aa 75%, #ff4081 100%);
+      transition: background .18s, transform .13s, box-shadow .2s;
+      box-shadow: 0 2px 14px #8e24aa48;
+      display: inline-block; margin-top: 4px;
+    }
+    .nav-menu a.active, .nav-menu a:hover {
+      background: linear-gradient(90deg, #ff4081, #8e24aa 65%, #1a237e 100%);
+      color: #fff; box-shadow: 0 6px 22px #ff4081b6;
+      transform: scale(1.08);
+    }
+    .main-content {
+      background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
+      border-radius: 30px; max-width: 800px; margin: 0 auto;
+      margin-top: 120px; margin-bottom: 42px; padding: 40px 33px 40px 33px;
+      box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
+      z-index: 11; position: relative;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .headline {
+      font-size: 2.3rem; font-weight: 800; letter-spacing: 2px;
+      text-align: center;
+      background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
+      background-size:210% 110%;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;color:transparent;
+      animation: animateGradient 7s ease-in-out infinite alternate;
+      margin-bottom: 40px;
+    }
+    .news-list {
+      display: flex; flex-direction: column; gap: 30px; margin: 0 auto; max-width: 640px;
+    }
+    .news-card {
+      background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
+      border-radius: 20px; box-shadow: 0 4px 18px #8e24aa66;
+      padding: 28px 24px; color: #fff; font-size: 1.23rem; font-weight:500;
+      text-align: center;
+    }
+    @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
+    @media (max-width:900px) { .main-content{max-width:99vw;} }
+    @media (max-width:700px) { .main-content{margin-top:130px;padding:8vw 1vw;} .headline{font-size:1.3rem;} }
   </style>
 </head>
 <body>
   <header class="site-header">
-    <div class="logo-anim">
-      <span class="g1">G</span><span class="g2">L</span><span class="g3">O</span><span class="g4">B</span><span class="g5">A</span><span class="g6">L</span>
-      <span class="minus">-</span>
-      <span class="g7">G</span><span class="g8">A</span><span class="g9">M</span><span class="g10">E</span><span class="g11">S</span>
-    </div>
+    <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
     <nav class="nav-menu">
       <ul>
         <li><a href="index.html">Home</a></li>
@@ -36,13 +83,30 @@
     </nav>
   </header>
   <div class="main-content">
-    <h2 class="headline">Coming soon</h2>
+    <div class="headline">Coming soon</div>
     <div class="news-list">
       <div class="news-card">🌟 New voting system for contests is now live!</div>
       <div class="news-card">💡 Global-Games stats page in development.</div>
       <div class="news-card">🎉 Stay tuned for our Chrismas special contest!</div>
-      <!-- Add more .news-card entries here for new news -->
+      <!-- Add more <div class="news-card"> here for new news -->
     </div>
   </div>
+  <script src="wave-title.js"></script>
+  <script>
+    // Wave effect for GLOBAL-GAMES in header
+    function waveText(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = el.textContent;
+      el.innerHTML = '';
+      [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.setProperty('--char-index', i);
+        el.appendChild(span);
+      });
+    }
+    waveText('header-global-games');
+  </script>
 </body>
 </html>
