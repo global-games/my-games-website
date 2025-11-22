@@ -1,6 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  #cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #222;
+  color: #fff;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  z-index: 9999;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+}
+
+#cookie-banner p {
+  margin: 0;
+  max-width: 80%;
+}
+
+#cookie-banner a {
+  color: #4ea3ff;
+  text-decoration: underline;
+}
+
+#accept-cookies {
+  background-color: #4ea3ff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+}
+
   <meta charset="UTF-8">
   <title>My Contests | GLOBAL-GAMES</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
