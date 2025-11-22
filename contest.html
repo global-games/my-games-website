@@ -3,8 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>My Contests | GLOBAL-GAMES</title>
-  <meta name="description" content="Discover and vote at GLOBAL-GAMES contests!">
+  <meta name="description" content="Vote for up to 3 of your favorite games!">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
+  <style>
+    body {background: #101729;}
+    .main-content {max-width: 900px;}
+    .vote-grid {display: flex; flex-wrap: wrap; gap: 22px;}
+    .vote-card {
+      background: linear-gradient(120deg,#1a237e 7%,#8e24aa 50%,#ff4081 93%);
+      color: #fff;
+      border-radius: 22px;
+      box-shadow: 0 2px 14px #8e24aa77;
+      width: 210px; min-width:180px; min-height:290px; padding: 10px;
+      display: flex; flex-direction: column; align-items: center;
+      transition: box-shadow 0.23s;
+      border: 2.5px solid #240c5c;
+      opacity: 0.91;
+    }
+    .vote-card.selected { box-shadow: 0 0 36px #8e24aa99; opacity: 1; border:3.5px solid #ff4081;}
+    .vote-img {width: 140px; height: 140px;object-fit:cover; border-radius:16px;margin-bottom:10px;}
+    .vote-title {margin: 7px 0 10px;font-weight:bold;font-size:1.13rem;text-align:center;}
+    .vote-info {font-size:0.98rem;text-align:center;color: #fff3;}
+    .vote-select {margin: 0 0 4px 0;}
+    .stats-bar {height: 19px; border-radius: 14px; margin: 7px 0 11px;background:#290f5f;}
+    .stats-bar-inner {height: 100%; border-radius: 14px;background:linear-gradient(90deg, #8e24aa 10%, #ff4081 84%);}
+    .vote-submit {display:block;margin:19px auto 0 auto;}
+    .vote-submit[disabled] {opacity:0.55; filter:grayscale(60%);}
+    .chart-section {margin:30px auto;max-width:790px;}
+    .chart-bar-wrap {position:relative;display:flex;align-items:center;margin-bottom:6px;}
+    .chart-bar-label {min-width:120px; font-size:0.97rem;}
+    .chart-bar {height:19px; border-radius:14px; background:#1a237e; box-shadow:0 1px 4px #8e24aa44;}
+    .chart-bar-inner {height:100%; border-radius:14px;background:linear-gradient(90deg,#8e24aa,#ff4081);}
+    .chart-val {margin-left:12px;font-weight:500;color:#fff;}
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -22,16 +54,90 @@
     </nav>
   </header>
   <div class="main-content">
-    <h2>Vote in global-games contests</h2>
-    <div class="news-section">
-      <h3>Latest Poll</h3>
-      <p>Here's the current voting for our latest contest. Only admins (you) can create new polls!</p>
-    </div>
-    <!-- Beispiel: Microsoft Forms Embed (hier dein eigener, von dir erstellter Embed-Code einfügen!)-->
-    <iframe src="https://forms.office.com/Pages/ResponsePage.aspx?...YOUR_FORM_ID..." width="100%" height="480" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    <h2>Vote for up to <span style="color:#ff4081">3</span> favorites!</h2>
+    <div class="vote-grid" id="voteGrid"></div>
+    <button class="button-cta vote-submit" id="submitVote" disabled>Submit Vote</button>
+    <div class="chart-section" id="chartSection"></div>
   </div>
   <script>
-  // Welleneffekt für h1 (optional auf der Seite)
+    // OPTION DATA: Replace titles/images as needed!
+    const options = Array.from({length:20}, (_,i) => ({
+      id:"vote"+(i+1),
+      title:"Option "+(i+1),
+      img:"option"+(i+1)+".jpg", // IMAGES: option1.jpg ... option20.jpg
+      info:"Game "+(i+1)
+    }));
+    // Voting statistics kept in localStorage
+    let stats = JSON.parse(localStorage.getItem("globalGames_stats")) || Array(options.length).fill(0);
+    // Prevent multiple votes per browser (per IP only with server backend)
+    let voted = localStorage.getItem("globalGames_voted") === "yes";
+
+    // Build cards
+    const grid = document.getElementById("voteGrid");
+    options.forEach((opt,idx)=>{
+      let card = document.createElement("div");
+      card.className = "vote-card";
+      card.id = opt.id;
+      card.innerHTML = `
+        <img src="${opt.img}" alt="${opt.title}" class="vote-img" onerror="this.style.opacity=0.2">
+        <div class="vote-title">${opt.title}</div>
+        <div class="vote-info">${opt.info}</div>
+        <input type="checkbox" class="vote-select" id="vote_check_${idx}" ${voted?"disabled":""}>
+        <div class="stats-bar">
+          <div class="stats-bar-inner" style="width:${stats[idx]/(Math.max(...stats,1))*100}%"></div>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    let selected = [];
+    let selects = grid.querySelectorAll('.vote-select');
+    selects.forEach((box,idx)=>{
+      box.addEventListener('change', function(){
+        if(this.checked){
+          if(selected.length<3){ selected.push(idx); grid.children[idx].classList.add("selected"); }
+          else{ this.checked=false;}
+        }else{
+          selected = selected.filter(x=>x!==idx); grid.children[idx].classList.remove("selected");
+        }
+        document.getElementById("submitVote").disabled = selected.length===0 || voted;
+      });
+    });
+
+    // Voting logic
+    document.getElementById("submitVote").onclick = function(){
+      if(voted || selected.length===0) return;
+      selected.forEach(i=>stats[i]++);
+      localStorage.setItem("globalGames_stats", JSON.stringify(stats));
+      localStorage.setItem("globalGames_voted","yes");
+      voted = true;
+      for(let el of selects){ el.disabled = true; }
+      document.getElementById("submitVote").disabled = true;
+      showChart();
+      grid.querySelectorAll('.vote-card').forEach(el=>el.classList.remove("selected"));
+    };
+    if(voted) {
+      selects.forEach(box=>box.disabled=true);
+      document.getElementById("submitVote").disabled = true;
+    }
+
+    // Results Chart
+    function showChart(){
+      let sum = stats.reduce((a,b)=>a+b,0);
+      let chart = "<h2>Live results</h2>";
+      options.forEach((opt,idx)=>{
+        let val = stats[idx]||0;
+        let prc = sum? Math.round(val/sum*100):0;
+        chart += `<div class="chart-bar-wrap">
+          <span class="chart-bar-label">${opt.title}</span>
+          <div class="chart-bar" style="width:200px;">
+            <div class="chart-bar-inner" style="width:${prc*2}px"></div>
+          </div>
+          <span class="chart-val">${val} (${prc}%)</span>
+        </div>`;
+      });
+      document.getElementById("chartSection").innerHTML = chart;
+    }
+    showChart();
   </script>
 </body>
 </html>
