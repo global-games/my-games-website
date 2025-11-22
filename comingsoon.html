@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Coming soon | GLOBAL-GAMES</title>
-  <meta name="description" content="Discover upcoming features for GLOBAL-GAMES!">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
+  <style>
+    .news-list {display:flex;flex-direction:column;gap:16px;margin:0 auto;max-width:570px;}
+    .news-card {background:linear-gradient(100deg, #1a237e 9%, #8e24aa 70%, #ff4081 92%);
+      color:#fff;padding:18px 22px;border-radius:18px;box-shadow:0 2px 10px #8e24aa77;}
+    h2.headline {font-size:2.1rem;background:linear-gradient(90deg, #1a237e, #8e24aa , #ff4081);background-size:210% 110%;background-position: 0 0;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:textColorfulFlow 8s ease-in-out infinite;}
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -22,10 +28,11 @@
     </nav>
   </header>
   <div class="main-content">
-    <h2>Coming soon</h2>
-    <div class="news-section">
-      <h3>New features in development!</h3>
-      <p>Watch out for new voting tools, stats and fun community features coming very soon!</p>
+    <h2 class="headline">Coming soon</h2>
+    <div class="news-list">
+      <div class="news-card">🌟 New voting system for contests is now live!</div>
+      <div class="news-card">💡 Global-Games stats page in development.</div>
+      <div class="news-card">🎉 Stay tuned for our Chrismas special contest!</div>
     </div>
   </div>
 </body>
