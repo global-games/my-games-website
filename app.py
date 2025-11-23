@@ -2,7 +2,11 @@ from flask import Flask, render_template, request, jsonify
 from model import TextGenerator
 
 app = Flask(__name__)
+
 generator = TextGenerator()
+@app.route("/textgenerator")
+def textgenerator_page():
+    return render_template("textgenerator.html")
 
 @app.route("/")
 def home():
