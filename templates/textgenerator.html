@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>KI Textgenerator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+
+        <h1>KI Textgenerator</h1>
+        <p>Gib einen Text oder eine Idee ein – die KI schreibt weiter.</p>
+
+        <textarea id="prompt" placeholder="Dein Text ..."></textarea>
+
+        <button onclick="generateText()">Text generieren</button>
+
+        <div id="result"></div>
+    </div>
+
+<script>
+function generateText() {
+    const prompt = document.getElementById("prompt").value;
+
+    fetch("/generate", {
+        method: "POST",
+        body: new URLSearchParams({ prompt: prompt }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById("result").innerHTML = "<p class='error'>" + data.error + "</p>";
+        } else {
+            document.getElementById("result").innerHTML = "<p>" + data.text.replace(/\n/g, "<br>") + "</p>";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
