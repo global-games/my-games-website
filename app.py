@@ -1,26 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-from model import TextGenerator
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 app = Flask(__name__)
 
-generator = TextGenerator()
-@app.route("/textgenerator")
-def textgenerator_page():
-    return render_template("textgenerator.html")
+# Modell laden (z.B. nach dem Training aus Colab)
+model = GPT2LMHeadModel.from_pretrained("my_model")
+tokenizer = GPT2Tokenizer.from_pretrained("my_model")
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/contests")
-def contests():
-    return render_template("contests.html")
-
-@app.route("/comingsoon")
-def comingsoon():
-    return render_template("comingsoon.html")
-
-# 🔥 DEINE NEUE KI-SEITE
 @app.route("/textgenerator")
 def textgenerator_page():
     return render_template("textgenerator.html")
@@ -30,9 +16,11 @@ def generate():
     prompt = request.form.get("prompt", "")
     if not prompt.strip():
         return jsonify({"error": "Bitte gib einen Text ein."})
-
-    output = generator.generate(prompt)
-    return jsonify({"text": output})
+    
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(**inputs, max_length=150)
+    text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return jsonify({"text": text})
 
 if __name__ == "__main__":
     app.run(debug=True)
