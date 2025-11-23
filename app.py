@@ -16,10 +16,16 @@ def contests():
 def comingsoon():
     return render_template("comingsoon.html")
 
-# 🔥 HIER kommt die neue Route hin
+# 🔥 DEINE NEUE KI-SEITE
 @app.route("/textgenerator")
 def textgenerator_page():
     return render_template("textgenerator.html")
+
+@app.route("/generate", methods=["POST"])
+def generate():
+    prompt = request.form.get("prompt", "")
+    if not prompt.strip():
+        return jsonify({"error": "Bitte gib einen Text ein."})
 
     output = generator.generate(prompt)
     return jsonify({"text": output})
