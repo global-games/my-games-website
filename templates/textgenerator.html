@@ -2,122 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>KI Textgenerator | GLOBAL-GAMES</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style-gradient.css">
-  <style>
-    body { background: #101729!important; margin: 0; }
-    /* HEADER & MENU IDENTISCH WIE BEI comingsoon.html */
-    .site-header {
-      width: 100vw; min-width: 100vw;
-      background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
-      box-shadow: 0 6px 24px #8e24aa59;
-      position: fixed; left: 0; top: 0; z-index: 2000;
-      min-height: 87px; display: flex; flex-direction: column; align-items: center;
-      animation: headerGradient 8s linear infinite alternate;
-      border-bottom: 3px solid #8e24aa; padding-bottom: 16px;
-    }
-    @keyframes headerGradient { 0%{background-position:0% 50%}100%{background-position:100% 50%} }
-    .logo-anim {
-      font-size: 2.09rem; font-weight: bold; letter-spacing: .14em;
-      margin: 1.2em 0 0.1em 0; display: flex; gap: 0.07em;
-      user-select: none;
-    }
-    .nav-menu ul {
-      list-style: none; display: flex; gap: 1.2em; margin: 0; padding: 0;
-      justify-content: center; align-items: center;
-    }
-    .nav-menu a {
-      text-decoration: none; color: #fff; font-weight: 600; font-size: 1.09rem;
-      padding: 11px 28px; border-radius: 30px; border: none;
-      background: linear-gradient(90deg, #1a237e 10%, #8e24aa 75%, #ff4081 100%);
-      transition: background .18s, transform .13s, box-shadow .2s;
-      box-shadow: 0 2px 14px #8e24aa48;
-      display: inline-block; margin-top: 4px;
-    }
-    .nav-menu a.active, .nav-menu a:hover {
-      background: linear-gradient(90deg, #ff4081, #8e24aa 65%, #1a237e 100%);
-      color: #fff; box-shadow: 0 6px 22px #ff4081b6;
-      transform: scale(1.08);
-    }
-    /* MAIN CONTENT */
-    .main-content {
-      background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
-      border-radius: 30px; max-width: 800px; margin: 0 auto;
-      margin-top: 120px; margin-bottom: 42px; padding: 40px 33px;
-      box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
-      text-align: center; color: #fff;
-    }
-    textarea {
-      width: 100%; height: 160px;
-      background: #1a1f33; color: #fff; font-size: 1rem;
-      padding: 14px; border-radius: 14px; border: 2px solid #8e24aa;
-      outline: none; resize: vertical;
-    }
-    button {
-      margin-top: 20px; padding: 14px 26px;
-      font-size: 1.1rem; font-weight: bold;
-      color: #fff; background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
-      border: none; border-radius: 25px; cursor: pointer;
-      transition: .18s;
-      box-shadow: 0 2px 14px #8e24aa55;
-    }
-    button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 6px 22px #ff408177;
-    }
-    #result {
-      background: #1a1d30;
-      margin-top: 25px; padding: 18px;
-      border-radius: 14px; color: #fff; font-size: 1.05rem;
-      min-height: 80px; white-space: pre-line;
-      border: 1px solid #8e24aa;
-    }
-  </style>
+  <title>KI Textgenerator</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+  <h1>KI Textgenerator</h1>
+  <textarea id="prompt" rows="4" cols="50" placeholder="Gib hier deinen Text ein..."></textarea><br>
+  <button id="generate">Generiere Text</button>
+  <h2>Ausgabe:</h2>
+  <pre id="output"></pre>
 
-<header class="site-header">
-  <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
-  <nav class="nav-menu">
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="contests.html">My Contests</a></li>
-      <li><a href="comingsoon.html">Coming soon</a></li>
-      <li><a href="textgenerator.html" class="active">KI Textgenerator</a></li>
-    </ul>
-  </nav>
-</header>
-
-<div class="main-content">
-  <h2>KI Textgenerator</h2>
-  <p>Gib einen Text oder eine Idee ein – die KI schreibt weiter:</p>
-
-  <textarea id="prompt" placeholder="Dein Text ..."></textarea>
-
-  <button onclick="generateText()">Text generieren</button>
-
-  <div id="result">Hier erscheint der Text…</div>
-</div>
-
-<script>
-function generateText() {
-  const prompt = document.getElementById("prompt").value;
-
-  fetch("/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ prompt })
-  })
-  .then(res => res.json())
-  .then(data => {
-      document.getElementById("result").innerText =
-        data.error ? data.error : data.text;
-  });
-}
-</script>
-
-<script src="wave-title.js"></script>
-
+  <script>
+    $("#generate").click(function(){
+      const prompt = $("#prompt").val();
+      $.post("/generate", {prompt: prompt}, function(data){
+        if(data.error){
+          alert(data.error);
+        } else {
+          $("#output").text(data.text);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
