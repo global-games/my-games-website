@@ -103,10 +103,11 @@
     margin-top: 0px;
   }
 
+  /* Kein Zoom für aktive Buttons */
   .nav-menu a.active {
     background: #fff;
     color: #6a1b9a;
-    transform: scale(1.08);
+    transform: none;
     box-shadow: 0 6px 22px rgba(255,255,255,0.75);
   }
 
@@ -156,11 +157,11 @@
   .header-image-container img {
     width: 100%;
     height: 100%;
-    border-radius: 50%; /* rund */
-    object-fit: cover;
+    border-radius: 0; /* kein runder Rahmen */
+    object-fit: contain; /* Durchsichtiger Hintergrund bleibt */
     box-shadow: 0 7px 30px #8e24aa77;
     z-index: 2;
-    border: none; /* kein Rahmen */
+    border: none;
   }
 
   /* ================= PAGE TITLE ================= */
@@ -268,7 +269,6 @@
     .content-box {font-size:1.09rem;}
     .scratch-btn {font-size:1rem;padding:13px 23px;}
   }
-
 </style>
 </head>
 <body>
@@ -290,7 +290,7 @@
 
   <!-- GLOW + BILD -->
   <div class="header-image-container">
-    <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher">
+    <img src="meinbild.png" alt="GLOBAL-GAMES Eyecatcher">
   </div>
 
   <!-- SEITENTITEL -->
