@@ -7,12 +7,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
   <style>
-    body { background: #101729!important; margin: 0; padding-top: 120px; }
+    /* ================= BODY ================= */
+    html, body {
+      background: #101729;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      scroll-behavior: smooth;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      width: 100%;
+      padding-top: 120px; /* Platz für den fixen Header */
+      display: flex;
+      justify-content: center;
+    }
 
     /* ================= HEADER ================= */
     .site-header {
       width: 100%;
-      position: fixed; top: 0; left: 0; z-index: 2000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
       background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
       box-shadow: 0 6px 24px #8e24aa59;
       border-bottom: 3px solid #8e24aa;
@@ -31,16 +50,25 @@
     }
 
     .header-inner {
-      max-width: 1200px; margin: 0 auto; min-height: 80px;
-      display: flex; flex-direction: column; align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       transition: all 0.3s ease-in-out;
     }
 
     /* ================= LOGO ================= */
     .logo-anim {
-      font-size: 2rem; font-weight: bold; letter-spacing: .14em;
-      margin: 0.4em 0 0 0; display: flex; gap: 0.07em;
-      user-select: none; color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: .14em;
+      margin: 0.4em 0 0 0;
+      display: flex;
+      gap: 0.07em;
+      user-select: none;
+      color: #fff;
     }
 
     .logo-anim span {
@@ -56,41 +84,82 @@
 
     /* ================= NAV BUTTONS ================= */
     .nav-menu ul {
-      list-style: none; display: flex; gap: 1.2em;
-      margin: 0; padding: 0; justify-content: center; align-items: center;
+      list-style: none;
+      display: flex;
+      gap: 1.2em;
+      margin: 0;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
     }
 
     .nav-menu a {
-      text-decoration: none; color: #fff; font-weight: 600; font-size: 1.05rem;
-      padding: 11px 28px; border-radius: 30px; border: 2px solid #fff;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 11px 28px;
+      border-radius: 30px;
+      border: 2px solid #fff;
       background: transparent;
       transition: background .18s, transform .13s, box-shadow .2s, color .18s;
       box-shadow: 0 2px 14px rgba(255,255,255,0.25);
-      display: inline-block; margin-top: 0px;
+      display: inline-block;
     }
 
     .nav-menu a.active {
-      background: #fff; color: #6a1b9a;
+      background: #fff;
+      color: #6a1b9a;
       transform: scale(1.08);
       box-shadow: 0 6px 22px rgba(255,255,255,0.75);
     }
 
     .nav-menu a:hover {
-      background: #fff; color: #6a1b9a;
+      background: #fff;
+      color: #6a1b9a;
       transform: scale(1.05);
       box-shadow: 0 4px 16px rgba(255,255,255,0.6);
     }
 
-    /* ================= PAGE CONTENT ================= */
+    /* ================= HEADER IMAGE ================= */
     .header-image-container {
-      width: 182px; height: 105px;
-      display: flex; justify-content: center; margin: 110px auto 28px auto;
-      animation: imageSwing 7s ease-in-out infinite; transform-origin: 60% 40%; z-index: 12;
+      position: relative;
+      width: 182px;
+      height: 105px;
+      margin: 80px auto 28px auto; /* leicht nach oben verschoben */
+      display: flex;
+      justify-content: center;
+      z-index: 12;
     }
+
+    /* Farbiger Glow-Hintergrund hinter dem Bild */
+    .header-image-container::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 120px;
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(20px);
+      background: linear-gradient(270deg, #1a237e, #8e24aa, #ff4081);
+      background-size: 600% 600%;
+      animation: glowGradient 8s ease-in-out infinite;
+    }
+
+    @keyframes glowGradient {
+      0% { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+      100% { background-position:0% 50%; }
+    }
+
     .header-image-container img {
-      width: 100%; height: 100%; border-radius: 13px; object-fit: cover;
+      width: 100%;
+      height: 100%;
+      border-radius: 13px;
+      object-fit: cover;
       box-shadow: 0 7px 30px #8e24aa77;
     }
+
     @keyframes imageSwing {
       0% {transform: rotate(-2deg) scale(1);}
       8% {transform: rotate(1.5deg) scale(1.05);}
@@ -103,23 +172,42 @@
     }
 
     h1 {
-      font-size: 3rem; font-weight: 900; letter-spacing: 1.5px;
-      background: none!important; text-align: center; user-select: none; width: 100%;
-      margin-top: 0; margin-bottom: 36px;
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      background: none!important;
+      text-align: center;
+      user-select: none;
+      width: 100%;
+      margin-top: 20px;
+      margin-bottom: 36px;
     }
 
+    /* ================= MAIN CONTENT ================= */
     .main-content {
       background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
-      border-radius: 30px; max-width: 700px; margin: 0 auto;
-      margin-top: 34px; margin-bottom: 42px; padding: 38px 28px;
+      border-radius: 30px;
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto 42px auto;
+      padding: 38px 28px;
       box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
-      z-index: 11; position: relative; display: flex; flex-direction: column; align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 11;
     }
 
     .content-box {
       background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
-      border-radius: 20px; box-shadow: 0 4px 18px #8e24aa66; margin-bottom: 22px;
-      padding: 25px 17px; display: flex; flex-direction: column; align-items: center;
+      border-radius: 20px;
+      box-shadow: 0 4px 18px #8e24aa66;
+      margin-bottom: 22px;
+      padding: 25px 17px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       font-size: 1.35rem;
     }
 
@@ -130,12 +218,14 @@
       background-clip:text; color:transparent;
       animation: animateGradient 8s ease-in-out infinite alternate;
       font-size: 1.5rem; font-weight: 600;
-      text-align: center; margin-bottom: 18px;
+      text-align: center;
+      margin-bottom: 18px;
     }
 
     .content-box ul {margin-top: 10px;}
     .content-box li {
-      margin-bottom: 17px; font-size: 1.29em;
+      margin-bottom: 17px;
+      font-size: 1.29em;
       background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
       background-size:210% 110%;
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
@@ -143,11 +233,21 @@
     }
 
     .scratch-btn {
-      padding: 15px 40px; font-size: 1.15rem; border-radius: 32px; font-weight: 700;
-      color: #fff; border: none; margin: 0 auto; margin-top: 38px;
+      padding: 15px 40px;
+      font-size: 1.15rem;
+      border-radius: 32px;
+      font-weight: 700;
+      color: #fff;
+      border: none;
+      margin: 0 auto;
+      margin-top: 38px;
       background: linear-gradient(90deg,#1a237e,#8e24aa 57%,#ff4081 93%);
       background-size: 210% 100%; animation: animateGradient 3s linear infinite alternate;
-      box-shadow: 0 4px 22px #8e24aa33; transition: background .22s, transform .17s; cursor: pointer; display: block; text-decoration:none;
+      box-shadow: 0 4px 22px #8e24aa33;
+      transition: background .22s, transform .17s;
+      cursor: pointer;
+      display: block;
+      text-decoration:none;
     }
 
     .scratch-btn:hover {
@@ -160,8 +260,8 @@
     @media (max-width:900px) { .main-content{max-width:98vw;} }
     @media (max-width:700px) {
       h1 {font-size: 2.1rem;}
-      .main-content {margin-top:120px;}
-      .header-image-container {height:55px;width:94px;}
+      .main-content {margin-top:100px;}
+      .header-image-container {height:55px;width:94px; margin:70px auto 20px auto;}
       .content-box {font-size:1.09rem;}
       .scratch-btn {font-size:1rem;padding:13px 23px;}
     }
@@ -205,7 +305,6 @@
 
   <script src="wave-title.js"></script>
   <script>
-    // Wave effect for GLOBAL-GAMES
     function waveText(id) {
       const el = document.getElementById(id);
       if (!el) return;
