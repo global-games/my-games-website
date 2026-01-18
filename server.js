@@ -10,10 +10,14 @@ const db = new sqlite3.Database('./votes.db');
 app.use(cors());
 app.use(express.json());
 
-// --- CONFIG ---
-const VOTE_COOLDOWN_MS = 1000 * 60 * 60 * 24; // 24h
+// ==================
+// KONFIGURATION
+// ==================
+const OPTIONS_COUNT = 20;
 
-// --- DB ---
+// ==================
+// DATENBANK
+// ==================
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS votes (
@@ -21,6 +25,8 @@ db.serialize(() => {
       fingerprint TEXT,
       ipHash TEXT,
       userAgent TEXT,
+      language TEXT,
+      timezone TEXT,
       votedAt INTEGER
     )
   `);
@@ -32,12 +38,17 @@ db.serialize(() => {
     )
   `);
 
-  for (let i = 1; i <= 20; i++) {
-    db.run('INSERT OR IGNORE INTO stats(option,votes) VALUES (?,0)', i);
+  for (let i = 1; i <= OPTIONS_COUNT; i++) {
+    db.run(
+      'INSERT OR IGNORE INTO stats(option, votes) VALUES (?, 0)',
+      i
+    );
   }
 });
 
-// --- HELPERS ---
+// ==================
+// HELFER
+// ==================
 function sha256(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
@@ -50,32 +61,41 @@ function getIp(req) {
   );
 }
 
-// --- VOTE ---
+// ==================
+// VOTE ENDPOINT
+// ==================
 app.post('/vote', (req, res) => {
-  const { fingerprint, picks, tz, lang } = req.body;
+  const { fingerprint, picks, lang, tz } = req.body;
 
   if (!fingerprint || !Array.isArray(picks)) {
-    return res.json({ ok: false });
+    return res.json({ ok: false, error: 'Invalid request' });
   }
 
+  // Picks validieren
   const cleanPicks = [...new Set(picks)].filter(
-    p => Number.isInteger(p) && p >= 1 && p <= 20
+    p => Number.isInteger(p) && p >= 1 && p <= OPTIONS_COUNT
   );
-  if (!cleanPicks.length || cleanPicks.length > 3) {
-    return res.json({ ok: false });
+
+  if (cleanPicks.length === 0 || cleanPicks.length > 3) {
+    return res.json({ ok: false, error: 'Invalid picks' });
   }
 
   const ipHash = sha256(getIp(req));
   const ua = req.headers['user-agent'] || '';
 
+  // STARKER PERSONEN-HASH
   const personHash = sha256(
-    fingerprint + ipHash + ua + (lang || '') + (tz || '')
+    fingerprint +
+    ipHash +
+    ua +
+    (lang || '') +
+    (tz || '')
   );
 
-  const now = Date.now();
+  const votedAt = Date.now();
 
   db.get(
-    'SELECT votedAt FROM votes WHERE personHash = ?',
+    'SELECT personHash FROM votes WHERE personHash = ?',
     personHash,
     (err, row) => {
       if (row) {
@@ -84,14 +104,17 @@ app.post('/vote', (req, res) => {
 
       db.run(
         `
-        INSERT INTO votes(personHash,fingerprint,ipHash,userAgent,votedAt)
-        VALUES (?,?,?,?,?)
+        INSERT INTO votes
+        (personHash, fingerprint, ipHash, userAgent, language, timezone, votedAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
         personHash,
         fingerprint,
         ipHash,
         ua,
-        now,
+        lang || '',
+        tz || '',
+        votedAt,
         () => {
           cleanPicks.forEach(opt => {
             db.run(
@@ -99,6 +122,7 @@ app.post('/vote', (req, res) => {
               opt
             );
           });
+
           sendStats(res, true);
         }
       );
@@ -106,18 +130,24 @@ app.post('/vote', (req, res) => {
   );
 });
 
-// --- STATS ---
-app.get('/stats', (_, res) => sendStats(res, true));
+// ==================
+// STATS ENDPOINT
+// ==================
+app.get('/stats', (req, res) => {
+  sendStats(res, true);
+});
 
 function sendStats(res, ok) {
   db.all(
-    'SELECT option,votes FROM stats ORDER BY option ASC',
+    'SELECT option, votes FROM stats ORDER BY option ASC',
     (err, rows) => {
-      res.json({ ok, stats: rows.map(r => r.votes) });
+      const stats = rows.map(r => r.votes);
+      res.json({ ok, stats });
     }
   );
 }
 
-app.listen(5050, () =>
-  console.log('🔒 Secure vote server running on :5050')
-);
+// ==================
+app.listen(5050, () => {
+  console.log('🔒 Secure Vote Server running on http://localhost:5050');
+});
