@@ -6,49 +6,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
   <style>
-    body { background: #101729!important; margin: 0; }
+    /* ================= GLOBAL ================= */
+    body {
+      background:#101729!important;
+      margin:0;
+      padding-top: 120px; /* Platz für fixen Header */
+    }
+
+    /* ================= HEADER ================= */
     .site-header {
-      width: 100vw; min-width: 100vw;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
       background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
       box-shadow: 0 6px 24px #8e24aa59;
-      position: fixed; left: 0; top: 0; z-index: 2000;
-      min-height: 87px; display: flex; flex-direction: column; align-items: center;
+      border-bottom: 3px solid #8e24aa;
       animation: headerGradient 8s linear infinite alternate;
-      border-bottom: 3px solid #8e24aa; padding-bottom: 16px;
+      transition: all 0.3s ease-in-out;
     }
-    @keyframes headerGradient { 0%{background-position:0% 50%}100%{background-position:100% 50%} }
+
+    .site-header.shrink {
+      padding-bottom: 4px;
+      padding-top: 4px;
+    }
+
+    @keyframes headerGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* ================= LOGO ================= */
     .logo-anim {
-      font-size: 2.09rem; font-weight: bold; letter-spacing: .14em;
-      margin: 1.2em 0 0.1em 0; display: flex; gap: 0.07em;
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: .14em;
+      margin: 0.4em 0 0 0; /* Logo leicht nach oben verschoben */
+      display: flex;
+      gap: 0.07em;
       user-select: none;
+      color: #fff; /* weiße Buchstaben */
     }
+
+    .logo-anim span {
+      display: inline-block;
+      animation: lightWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
+      animation-delay: calc(var(--char-index) * 0.1s);
+    }
+
+    @keyframes lightWave {
+      0%,100% { transform: translateY(0) scale(1) rotate(0deg); }
+      50% { transform: translateY(-8px) scale(1.03) rotate(-1deg); } /* leichte Welle */
+    }
+
+    /* ================= NAV BUTTONS ================= */
     .nav-menu ul {
-      list-style: none; display: flex; gap: 1.2em; margin: 0; padding: 0;
-      justify-content: center; align-items: center;
+      list-style: none;
+      display: flex;
+      gap: 1.2em;
+      margin: 0;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
     }
+
     .nav-menu a {
-      text-decoration: none; color: #fff; font-weight: 600; font-size: 1.09rem;
-      padding: 11px 28px; border-radius: 30px; border: none;
-      background: linear-gradient(90deg, #1a237e 10%, #8e24aa 75%, #ff4081 100%);
-      transition: background .18s, transform .13s, box-shadow .2s;
-      box-shadow: 0 2px 14px #8e24aa48;
-      display: inline-block; margin-top: 4px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 11px 28px;
+      border-radius: 30px;
+      border: 2px solid #fff;
+      background: transparent;
+      transition: background .18s, transform .13s, box-shadow .2s, color .18s;
+      box-shadow: 0 2px 14px rgba(255,255,255,0.25);
+      display: inline-block;
+      margin-top: 0px; /* Button nach oben verschoben */
     }
-    .nav-menu a.active, .nav-menu a:hover {
-      background: linear-gradient(90deg, #ff4081, #8e24aa 65%, #1a237e 100%);
-      color: #fff; box-shadow: 0 6px 22px #ff4081b6;
+
+    .nav-menu a.active {
+      background: #fff;
+      color: #6a1b9a;
       transform: scale(1.08);
+      box-shadow: 0 6px 22px rgba(255,255,255,0.75);
     }
+
+    .nav-menu a:hover {
+      background: #fff;
+      color: #6a1b9a;
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.6);
+    }
+
+    /* ================= MAIN CONTENT ================= */
     .main-content {
       background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
-      border-radius: 30px; max-width: 800px; margin: 0 auto;
-      margin-top: 120px; margin-bottom: 42px; padding: 40px 33px 40px 33px;
+      border-radius: 30px;
+      max-width: 800px;
+      margin: 0 auto;
+      margin-top: 20px; /* Header Padding ist schon 120px */
+      margin-bottom: 42px;
+      padding: 40px 33px;
       box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
-      z-index: 11; position: relative;
-      display: flex; flex-direction: column; align-items: center;
+      z-index: 11;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
+
     .headline {
-      font-size: 2.3rem; font-weight: 800; letter-spacing: 2px;
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: 2px;
       text-align: center;
       background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
       background-size:210% 110%;
@@ -57,15 +139,26 @@
       animation: animateGradient 7s ease-in-out infinite alternate;
       margin-bottom: 40px;
     }
+
     .news-list {
-      display: flex; flex-direction: column; gap: 30px; margin: 0 auto; max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin: 0 auto;
+      max-width: 640px;
     }
+
     .news-card {
       background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
-      border-radius: 20px; box-shadow: 0 4px 18px #8e24aa66;
-      padding: 28px 24px; color: #fff; font-size: 1.23rem; font-weight:500;
+      border-radius: 20px;
+      box-shadow: 0 4px 18px #8e24aa66;
+      padding: 28px 24px;
+      color: #fff;
+      font-size: 1.23rem;
+      font-weight:500;
       text-align: center;
     }
+
     @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
     @media (max-width:900px) { .main-content{max-width:99vw;} }
     @media (max-width:700px) { .main-content{margin-top:130px;padding:8vw 1vw;} .headline{font-size:1.3rem;} }
@@ -73,16 +166,19 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
-    <nav class="nav-menu">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="contests.html">My Contests</a></li>
-        <li><a href="comingsoon.html" class="active">Coming soon</a></li>
-        <li><a href="/textgenerator">KI Textgenerator</a></li>
-      </ul>
-    </nav>
+    <div class="header-inner">
+      <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="contests.html">My Contests</a></li>
+          <li><a href="comingsoon.html">Coming soon</a></li>
+          <li><a href="/textgenerator">KI Textgenerator</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
+
   <div class="main-content">
     <div class="headline">Coming soon</div>
     <div class="news-list">
@@ -97,9 +193,9 @@
       <div class="news-card">05.10.2025  Site for voting programmed!!!</div>
       <div class="news-card">15.08.2025  Site for news added!</div>
       <div class="news-card">22.05.2025  Hopepage created!</div>
-      <!-- Add more <div class="news-card"> here for new news -->
     </div>
   </div>
+
   <script src="wave-title.js"></script>
   <script>
     // Wave effect for GLOBAL-GAMES in header
@@ -116,15 +212,31 @@
       });
     }
     waveText('header-global-games');
+
+    // Active nav button highlight
+    window.addEventListener('pageshow', () => {
+      const navLinks = document.querySelectorAll('.nav-menu a');
+      navLinks.forEach(link => link.classList.remove('active'));
+      const current = location.pathname.split("/").pop();
+      navLinks.forEach(link => {
+        if(link.getAttribute('href') === current) link.classList.add('active');
+      });
+    });
+
+    // Header shrink on scroll
+    const header = document.querySelector('.site-header');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 50) header.classList.add('shrink');
+      else header.classList.remove('shrink');
+    });
   </script>
-  <!-- Footer für Impressum & Datenschutzerklärung -->
-<footer style="text-align:center; padding:20px; font-size:0.9em; color:#555; border-top:1px solid #ccc; margin-top:40px; position:relative; bottom:0; width:100%;">
+
+  <footer style="text-align:center; padding:20px; font-size:0.9em; color:#555; border-top:1px solid #ccc; margin-top:40px;">
     <p>
         &copy; 2025 Jonas Schwinn | 
         <a href="impressum.html" target="_blank">Impressum</a> | 
         <a href="datenschutzerklärung.html" target="_blank">Datenschutzerklärung</a>
     </p>
-</footer>
-
+  </footer>
 </body>
 </html>
