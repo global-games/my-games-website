@@ -1,273 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>GLOBAL-GAMES | Games, Projects & Community</title>
-  <meta name="description" content="Discover innovative games, creative projects, and the community of GLOBAL-GAMES. Join and be part of the movement!">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style-gradient.css">
-  <style>
-    /* ================= BODY ================= */
-    html, body {
-      background: #101729;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      scroll-behavior: smooth;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      width: 100%;
-      padding-top: 120px; /* Platz für den fixen Header */
-      display: flex;
-      justify-content: center;
-    }
+<meta charset="UTF-8">
+<title>GLOBAL-GAMES | Games, Projects & Community</title>
+<meta name="description" content="Discover innovative games, creative projects, and the community of GLOBAL-GAMES. Join and be part of the movement!">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style-gradient.css">
+<style>
+  /* ================= BODY ================= */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: #101729;
+    display: flex;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px; /* Platz für Header */
+  }
 
-    /* ================= HEADER ================= */
-    .site-header {
-      width: 100%;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 2000;
-      background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
-      box-shadow: 0 6px 24px #8e24aa59;
-      border-bottom: 3px solid #8e24aa;
-      animation: headerGradient 8s linear infinite alternate;
-      transition: all 0.3s ease-in-out;
-    }
+  /* ================= HEADER ================= */
+  .site-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
+    box-shadow: 0 6px 24px #8e24aa59;
+    border-bottom: 3px solid #8e24aa;
+    animation: headerGradient 8s linear infinite alternate;
+  }
+  @keyframes headerGradient { 0%{background-position:0% 50%}100%{background-position:100% 50%} }
 
-    .site-header.shrink {
-      padding-bottom: 4px;
-      padding-top: 4px;
-    }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    @keyframes headerGradient {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
+  .logo-anim {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: .14em;
+    margin: 0.4em 0 0 0;
+    display: flex;
+    gap: 0.07em;
+    user-select: none;
+    color: #fff;
+  }
+  .logo-anim span {
+    display: inline-block;
+    animation: lightWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
+    animation-delay: calc(var(--char-index) * 0.1s);
+  }
+  @keyframes lightWave {
+    0%,100% { transform: translateY(0) scale(1) rotate(0deg); }
+    50% { transform: translateY(-8px) scale(1.03) rotate(-1deg); }
+  }
 
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      min-height: 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: all 0.3s ease-in-out;
-    }
+  .nav-menu ul {
+    list-style: none;
+    display: flex;
+    gap: 1.2em;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+  }
+  .nav-menu a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 11px 28px;
+    border-radius: 30px;
+    border: 2px solid #fff;
+    background: transparent;
+    transition: all 0.2s;
+    box-shadow: 0 2px 14px rgba(255,255,255,0.25);
+  }
+  .nav-menu a.active,
+  .nav-menu a:hover {
+    background: #fff;
+    color: #6a1b9a;
+    transform: scale(1.05);
+    box-shadow: 0 6px 22px rgba(255,255,255,0.75);
+  }
 
-    /* ================= LOGO ================= */
-    .logo-anim {
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: .14em;
-      margin: 0.4em 0 0 0;
-      display: flex;
-      gap: 0.07em;
-      user-select: none;
-      color: #fff;
-    }
+  /* ================= HEADER IMAGE + GLOW ================= */
+  .header-image-container {
+    position: relative;
+    width: 182px;
+    height: 105px;
+    margin: 40px auto 28px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+  }
 
-    .logo-anim span {
-      display: inline-block;
-      animation: lightWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
-      animation-delay: calc(var(--char-index) * 0.1s);
-    }
+  /* Glow hinter dem Bild */
+  .header-image-container::before {
+    content: '';
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(30px);
+    background: linear-gradient(270deg, #1a237e, #8e24aa, #ff4081);
+    background-size: 600% 600%;
+    animation: glowGradient 8s ease-in-out infinite, glowPulse 3s ease-in-out infinite alternate;
+  }
+  @keyframes glowGradient {
+    0% { background-position:0% 50%; }
+    50% { background-position:100% 50%; }
+    100% { background-position:0% 50%; }
+  }
+  @keyframes glowPulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+  }
 
-    @keyframes lightWave {
-      0%,100% { transform: translateY(0) scale(1) rotate(0deg); }
-      50% { transform: translateY(-8px) scale(1.03) rotate(-1deg); }
-    }
+  .header-image-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 13px;
+    object-fit: cover;
+    box-shadow: 0 7px 30px #8e24aa77;
+    z-index: 2;
+  }
 
-    /* ================= NAV BUTTONS ================= */
-    .nav-menu ul {
-      list-style: none;
-      display: flex;
-      gap: 1.2em;
-      margin: 0;
-      padding: 0;
-      justify-content: center;
-      align-items: center;
-    }
+  /* ================= PAGE TITLE ================= */
+  h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-align: center;
+    color: #fff;
+    margin-top: 20px;
+    margin-bottom: 36px;
+  }
 
-    .nav-menu a {
-      text-decoration: none;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.05rem;
-      padding: 11px 28px;
-      border-radius: 30px;
-      border: 2px solid #fff;
-      background: transparent;
-      transition: background .18s, transform .13s, box-shadow .2s, color .18s;
-      box-shadow: 0 2px 14px rgba(255,255,255,0.25);
-      display: inline-block;
-    }
+  /* ================= MAIN CONTENT ================= */
+  .main-content {
+    background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
+    border-radius: 30px;
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 42px;
+    padding: 38px 28px;
+    box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 0;
+  }
 
-    .nav-menu a.active {
-      background: #fff;
-      color: #6a1b9a;
-      transform: scale(1.08);
-      box-shadow: 0 6px 22px rgba(255,255,255,0.75);
-    }
+  .content-box {
+    background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
+    border-radius: 20px;
+    box-shadow: 0 4px 18px #8e24aa66;
+    margin-bottom: 22px;
+    padding: 25px 17px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.35rem;
+    text-align: center;
+  }
 
-    .nav-menu a:hover {
-      background: #fff;
-      color: #6a1b9a;
-      transform: scale(1.05);
-      box-shadow: 0 4px 16px rgba(255,255,255,0.6);
-    }
+  .big-gradient {
+    background: linear-gradient(90deg, #1a237e, #8e24aa, #ff4081);
+    background-size:240% 100%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: animateGradient 8s ease-in-out infinite alternate;
+    font-size: 1.5rem; font-weight: 600;
+    margin-bottom: 18px;
+  }
 
-    /* ================= HEADER IMAGE ================= */
-    .header-image-container {
-      position: relative;
-      width: 182px;
-      height: 105px;
-      margin: 80px auto 28px auto; /* leicht nach oben verschoben */
-      display: flex;
-      justify-content: center;
-      z-index: 12;
-    }
+  .content-box ul {
+    margin-top: 10px;
+    padding-left: 0;
+    list-style: none;
+  }
+  .content-box li {
+    margin-bottom: 17px;
+    font-size: 1.29em;
+    background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
+    background-size:210% 110%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation: animateGradient 3s linear infinite alternate;
+  }
 
-    /* Farbiger Glow-Hintergrund hinter dem Bild */
-    .header-image-container::before {
-      content: '';
-      position: absolute;
-      width: 200px;
-      height: 120px;
-      border-radius: 50%;
-      z-index: -1;
-      filter: blur(20px);
-      background: linear-gradient(270deg, #1a237e, #8e24aa, #ff4081);
-      background-size: 600% 600%;
-      animation: glowGradient 8s ease-in-out infinite;
-    }
+  .scratch-btn {
+    padding: 15px 40px;
+    font-size: 1.15rem;
+    border-radius: 32px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    margin: 0 auto;
+    margin-top: 38px;
+    background: linear-gradient(90deg,#1a237e,#8e24aa 57%,#ff4081 93%);
+    background-size: 210% 100%;
+    animation: animateGradient 3s linear infinite alternate;
+    box-shadow: 0 4px 22px #8e24aa33;
+    cursor: pointer;
+    text-decoration:none;
+  }
 
-    @keyframes glowGradient {
-      0% { background-position:0% 50%; }
-      50% { background-position:100% 50%; }
-      100% { background-position:0% 50%; }
-    }
+  .scratch-btn:hover {
+    background: linear-gradient(90deg,#ff4081 7%,#8e24aa 80%,#1a237e 97%);
+    transform: scale(1.08);
+  }
 
-    .header-image-container img {
-      width: 100%;
-      height: 100%;
-      border-radius: 13px;
-      object-fit: cover;
-      box-shadow: 0 7px 30px #8e24aa77;
-    }
+  @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
 
-    @keyframes imageSwing {
-      0% {transform: rotate(-2deg) scale(1);}
-      8% {transform: rotate(1.5deg) scale(1.05);}
-      25% {transform: rotate(5deg) scale(1.07);}
-      37% {transform: rotate(2deg) scale(1.02);}
-      50% {transform: rotate(-3deg) scale(1);}
-      65% {transform: rotate(-2deg) scale(.99);}
-      80% {transform: rotate(-6deg) scale(1);}
-      100% {transform: rotate(-2deg) scale(1);}
-    }
+  /* ================= FOOTER ================= */
+  footer {
+    text-align:center;
+    padding:20px;
+    font-size:0.9em;
+    color:#555;
+    border-top:1px solid #ccc;
+    width:100%;
+  }
 
-    h1 {
-      font-size: 3rem;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      background: none!important;
-      text-align: center;
-      user-select: none;
-      width: 100%;
-      margin-top: 20px;
-      margin-bottom: 36px;
-    }
+  /* ================= RESPONSIVE ================= */
+  @media (max-width:900px) { .main-content{max-width:98vw;} }
+  @media (max-width:700px) {
+    h1 {font-size: 2.1rem;}
+    .header-image-container {height:55px;width:94px; margin:30px auto 20px auto;}
+    .content-box {font-size:1.09rem;}
+    .scratch-btn {font-size:1rem;padding:13px 23px;}
+  }
 
-    /* ================= MAIN CONTENT ================= */
-    .main-content {
-      background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
-      border-radius: 30px;
-      max-width: 700px;
-      width: 100%;
-      margin: 0 auto 42px auto;
-      padding: 38px 28px;
-      box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      z-index: 11;
-    }
-
-    .content-box {
-      background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
-      border-radius: 20px;
-      box-shadow: 0 4px 18px #8e24aa66;
-      margin-bottom: 22px;
-      padding: 25px 17px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 1.35rem;
-    }
-
-    .big-gradient {
-      background: linear-gradient(90deg, #1a237e, #8e24aa, #ff4081);
-      background-size:240% 100%; background-position: 0 0;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip:text; color:transparent;
-      animation: animateGradient 8s ease-in-out infinite alternate;
-      font-size: 1.5rem; font-weight: 600;
-      text-align: center;
-      margin-bottom: 18px;
-    }
-
-    .content-box ul {margin-top: 10px;}
-    .content-box li {
-      margin-bottom: 17px;
-      font-size: 1.29em;
-      background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
-      background-size:210% 110%;
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-clip:text; color:transparent; animation: animateGradient 3s linear infinite alternate;
-    }
-
-    .scratch-btn {
-      padding: 15px 40px;
-      font-size: 1.15rem;
-      border-radius: 32px;
-      font-weight: 700;
-      color: #fff;
-      border: none;
-      margin: 0 auto;
-      margin-top: 38px;
-      background: linear-gradient(90deg,#1a237e,#8e24aa 57%,#ff4081 93%);
-      background-size: 210% 100%; animation: animateGradient 3s linear infinite alternate;
-      box-shadow: 0 4px 22px #8e24aa33;
-      transition: background .22s, transform .17s;
-      cursor: pointer;
-      display: block;
-      text-decoration:none;
-    }
-
-    .scratch-btn:hover {
-      background: linear-gradient(90deg,#ff4081 7%,#8e24aa 80%,#1a237e 97%);
-      transform: scale(1.08);
-    }
-
-    @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
-
-    @media (max-width:900px) { .main-content{max-width:98vw;} }
-    @media (max-width:700px) {
-      h1 {font-size: 2.1rem;}
-      .main-content {margin-top:100px;}
-      .header-image-container {height:55px;width:94px; margin:70px auto 20px auto;}
-      .content-box {font-size:1.09rem;}
-      .scratch-btn {font-size:1rem;padding:13px 23px;}
-    }
-  </style>
+</style>
 </head>
 <body>
+
+  <!-- HEADER -->
   <header class="site-header">
     <div class="header-inner">
       <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
@@ -282,12 +267,15 @@
     </div>
   </header>
 
+  <!-- GLOW + BILD -->
   <div class="header-image-container">
     <img src="meinbild.jpg" alt="GLOBAL-GAMES Eyecatcher">
   </div>
 
+  <!-- SEITENTITEL -->
   <h1 id="page-global-games">GLOBAL-GAMES</h1>
 
+  <!-- MAIN CONTENT -->
   <div class="main-content">
     <div class="content-box">
       <div class="big-gradient">
@@ -302,6 +290,15 @@
     </div>
     <a class="scratch-btn" href="https://scratch.mit.edu/users/global-games/" target="_blank" rel="noopener">Visit Our Scratch Page</a>
   </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+        &copy; 2025 Jonas Schwinn | 
+        <a href="impressum.html" target="_blank">Impressum</a> | 
+        <a href="datenschutzerklärung.html" target="_blank">Datenschutzerklärung</a>
+    </p>
+  </footer>
 
   <script src="wave-title.js"></script>
   <script>
@@ -320,30 +317,11 @@
     waveText('header-global-games');
     waveText('page-global-games');
 
-    // Active nav button highlight
-    window.addEventListener('pageshow', () => {
-      const navLinks = document.querySelectorAll('.nav-menu a');
-      navLinks.forEach(link => link.classList.remove('active'));
-      const current = location.pathname.split("/").pop();
-      navLinks.forEach(link => {
-        if(link.getAttribute('href') === current) link.classList.add('active');
-      });
-    });
-
-    // Header shrink on scroll
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      if(window.scrollY > 50) header.classList.add('shrink');
-      else header.classList.remove('shrink');
-    });
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    navLinks.forEach(link => link.classList.remove('active'));
+    const current = location.pathname.split("/").pop();
+    navLinks.forEach(link => { if(link.getAttribute('href') === current) link.classList.add('active'); });
   </script>
 
-  <footer style="text-align:center; padding:20px; font-size:0.9em; color:#555; border-top:1px solid #ccc; margin-top:40px; width:100%;">
-    <p>
-        &copy; 2025 Jonas Schwinn | 
-        <a href="impressum.html" target="_blank">Impressum</a> | 
-        <a href="datenschutzerklärung.html" target="_blank">Datenschutzerklärung</a>
-    </p>
-  </footer>
 </body>
 </html>
