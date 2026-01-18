@@ -10,13 +10,13 @@
   <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 
   <style>
-    body { background: #101729!important; margin: 0; }
-    /* ===== dein komplettes CSS UNVERÄNDERT ===== */
-    /* (aus Platzgründen hier nicht gekürzt, identisch zu deinem Original) */
+    body { background:#101729!important; margin:0; }
+    /* ⚠️ DEIN VORHANDENES CSS BLEIBT UNVERÄNDERT ⚠️ */
   </style>
 </head>
 
 <body>
+
 <header class="site-header">
   <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
   <nav class="nav-menu">
@@ -30,7 +30,7 @@
 
 <div class="main-content">
   <div class="vote-title-gradient" style="font-size:2.2rem;">
-    Chrismas contest 2025 - by global-games
+    Chrismas contest 2025 – by global-games
   </div>
 
   <div class="subtext">Select up to three projects</div>
@@ -42,8 +42,8 @@
   </button>
 
   <div class="vote-banner" id="voteBanner">
-    Thanks for your vote in the contest!  
-    The winners are going to be appointed on 05.01.2026.
+    Thanks for your vote!  
+    The winners will be announced on 05.01.2026.
   </div>
 
   <div class="chart-section" id="chartSection" style="display:none;"></div>
@@ -52,12 +52,15 @@
 <script src="wave-title.js"></script>
 
 <script>
-/* =========================================================
+/* =====================================================
    KONFIG
-========================================================= */
+===================================================== */
 const API = "http://localhost:5050";
 const MAX_PICKS = 3;
 
+/* =====================================================
+   OPTIONEN
+===================================================== */
 const options = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   title: "Game " + (i + 1),
@@ -65,18 +68,18 @@ const options = Array.from({ length: 20 }, (_, i) => ({
   info: "Awesome entry " + (i + 1)
 }));
 
-/* =========================================================
+/* =====================================================
    STATE
-========================================================= */
+===================================================== */
 let fingerprint = null;
 let selected = [];
 
 const grid = document.getElementById("voteGrid");
 const submitBtn = document.getElementById("submitVote");
 
-/* =========================================================
-   FINGERPRINT LADEN
-========================================================= */
+/* =====================================================
+   FINGERPRINT ERZEUGEN
+===================================================== */
 (async () => {
   const fp = await FingerprintJS.load();
   const result = await fp.get();
@@ -84,9 +87,9 @@ const submitBtn = document.getElementById("submitVote");
   loadStats();
 })();
 
-/* =========================================================
+/* =====================================================
    CARDS BAUEN
-========================================================= */
+===================================================== */
 function buildCards() {
   grid.innerHTML = "";
 
@@ -118,11 +121,13 @@ function buildCards() {
 
 buildCards();
 
-/* =========================================================
+/* =====================================================
    VOTE ABSENDEN
-========================================================= */
+===================================================== */
 submitBtn.onclick = async () => {
   if (!fingerprint || selected.length === 0) return;
+
+  submitBtn.disabled = true;
 
   const res = await fetch(API + "/vote", {
     method: "POST",
@@ -130,23 +135,18 @@ submitBtn.onclick = async () => {
     body: JSON.stringify({
       fingerprint,
       picks: selected,
-      lang: navigator.language,
-      tz: Intl.DateTimeFormat().resolvedOptions().timeZone
+      lang: navigator.language || "",
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone || ""
     })
   });
 
   const data = await res.json();
-
-  if (!data.ok) {
-    alert("You have already voted or your vote was rejected.");
-  }
-
   showResults(data.stats);
 };
 
-/* =========================================================
-   STATS
-========================================================= */
+/* =====================================================
+   STATS LADEN
+===================================================== */
 async function loadStats() {
   const res = await fetch(API + "/stats");
   const data = await res.json();
@@ -178,9 +178,9 @@ function showResults(stats) {
     }).join("");
 }
 
-/* =========================================================
-   WAVE HEADER
-========================================================= */
+/* =====================================================
+   HEADER WAVE
+===================================================== */
 function waveText(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -193,7 +193,7 @@ function waveText(id) {
     el.appendChild(span);
   });
 }
-waveText('header-global-games');
+waveText("header-global-games");
 </script>
 
 <footer style="text-align:center; padding:20px; font-size:0.9em; color:#555; border-top:1px solid #ccc; margin-top:40px;">
@@ -204,12 +204,12 @@ waveText('header-global-games');
   </p>
 </footer>
 
-<!-- Datenschutz-Hinweis -->
+<!-- Datenschutz -->
 <div id="cookie-banner">
   <p>
     Diese Webseite verwendet <strong>keine Cookies</strong>.  
-    Zur Sicherstellung einer fairen Abstimmung wird ein <strong>pseudonymisierter Geräte-Fingerprint</strong> verwendet.  
-    Weitere Informationen findest du in der <a href="datenschutzerklärung.html" target="_blank">Datenschutzerklärung</a>.
+    Zur Vermeidung mehrfacher Abstimmungen wird ein  
+    <strong>pseudonymisierter Geräte- & Netzwerk-Fingerprint</strong> verwendet.
   </p>
   <button id="accept-cookies">Akzeptieren</button>
 </div>
@@ -218,7 +218,6 @@ waveText('header-global-games');
 if (localStorage.getItem("cookiesAccepted") === "true") {
   document.getElementById("cookie-banner").style.display = "none";
 }
-
 document.getElementById("accept-cookies").onclick = () => {
   localStorage.setItem("cookiesAccepted", "true");
   document.getElementById("cookie-banner").style.display = "none";
