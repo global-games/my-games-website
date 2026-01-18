@@ -14,7 +14,7 @@
     body {
       background:#101729!important;
       margin:0;
-      padding-top: 130px; /* Platz für fixen Header */
+      padding-top: 120px; /* Platz für fixen Header */
     }
 
     /* ================= HEADER ================= */
@@ -24,11 +24,16 @@
       top: 0;
       left: 0;
       z-index: 2000;
-
       background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
       box-shadow: 0 6px 24px #8e24aa59;
       border-bottom: 3px solid #8e24aa;
       animation: headerGradient 8s linear infinite alternate;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .site-header.shrink {
+      padding-bottom: 4px;
+      padding-top: 4px;
     }
 
     @keyframes headerGradient {
@@ -39,20 +44,19 @@
     .header-inner {
       max-width: 1200px;
       margin: 0 auto;
-      min-height: 87px;
-      padding-bottom: 16px;
-
+      min-height: 80px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: all 0.3s ease-in-out;
     }
 
     /* ================= LOGO ================= */
     .logo-anim {
-      font-size: 2.1rem;
+      font-size: 2rem;
       font-weight: bold;
       letter-spacing: .14em;
-      margin: 1.2em 0 0.1em 0;
+      margin: 1em 0 0 0;
       display: flex;
       gap: 0.07em;
       user-select: none;
@@ -60,17 +64,13 @@
 
     .logo-anim span {
       display: inline-block;
-      animation: strongWave 2.8s cubic-bezier(.45,.05,.55,.95) infinite;
-      animation-delay: calc(var(--char-index) * 0.12s);
+      animation: strongWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
+      animation-delay: calc(var(--char-index) * 0.1s);
     }
 
     @keyframes strongWave {
-      0%,100% {
-        transform: translateY(0) scale(1) rotate(0deg);
-      }
-      50% {
-        transform: translateY(-16px) scale(1.08) rotate(-2deg);
-      }
+      0%,100% { transform: translateY(0) scale(1) rotate(0deg); }
+      50% { transform: translateY(-20px) scale(1.1) rotate(-3deg); }
     }
 
     /* ================= NAV BUTTONS ================= */
@@ -93,20 +93,43 @@
       border-radius: 30px;
       border: 2px solid #fff;
       background: transparent;
-
       transition: background .18s, transform .13s, box-shadow .2s, color .18s;
       box-shadow: 0 2px 14px rgba(255,255,255,0.25);
       display: inline-block;
       margin-top: 4px;
     }
 
-    .nav-menu a:hover,
     .nav-menu a.active {
       background: #fff;
       color: #6a1b9a;
       transform: scale(1.08);
       box-shadow: 0 6px 22px rgba(255,255,255,0.75);
     }
+
+    .nav-menu a:hover {
+      background: #fff;
+      color: #6a1b9a;
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.6);
+    }
+
+    /* ================= MAIN CONTENT ================= */
+    .main-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 30px;
+    }
+
+    .vote-title-gradient {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff4081, #8e24aa, #1a237e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .subtext { color: #ccc; margin-bottom: 20px; }
   </style>
 </head>
 
@@ -119,7 +142,7 @@
     <nav class="nav-menu">
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="contests.html" class="active">My Contests</a></li>
+        <li><a href="contests.html">My Contests</a></li>
         <li><a href="comingsoon.html">Coming soon</a></li>
         <li><a href="/textgenerator">KI Textgenerator</a></li>
       </ul>
@@ -129,154 +152,19 @@
 
 <!-- ================= MAIN ================= -->
 <div class="main-content">
-  <div class="vote-title-gradient" style="font-size:2.2rem;">
-    Chrismas contest 2025 – by global-games
-  </div>
-
+  <div class="vote-title-gradient">Chrismas contest 2025 – by global-games</div>
   <div class="subtext">Select up to three projects</div>
-
   <div class="vote-grid" id="voteGrid"></div>
-
-  <button class="vote-submit" id="submitVote" disabled>
-    Submit Vote
-  </button>
-
+  <button class="vote-submit" id="submitVote" disabled>Submit Vote</button>
   <div class="vote-banner" id="voteBanner">
-    Thanks for your vote!  
-    The winners will be announced on 05.01.2026.
+    Thanks for your vote! The winners will be announced on 05.01.2026.
   </div>
-
   <div class="chart-section" id="chartSection" style="display:none;"></div>
 </div>
 
 <script src="wave-title.js"></script>
 
 <script>
-/* =====================================================
-   KONFIG
-===================================================== */
-const API = "http://localhost:5050";
-const MAX_PICKS = 3;
-
-/* =====================================================
-   OPTIONEN
-===================================================== */
-const options = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  title: "Game " + (i + 1),
-  img: "option" + (i + 1) + ".jpg",
-  info: "Awesome entry " + (i + 1)
-}));
-
-/* =====================================================
-   STATE
-===================================================== */
-let fingerprint = null;
-let selected = [];
-
-const grid = document.getElementById("voteGrid");
-const submitBtn = document.getElementById("submitVote");
-
-/* =====================================================
-   FINGERPRINT
-===================================================== */
-(async () => {
-  const fp = await FingerprintJS.load();
-  const result = await fp.get();
-  fingerprint = result.visitorId;
-  loadStats();
-})();
-
-/* =====================================================
-   CARDS
-===================================================== */
-function buildCards() {
-  grid.innerHTML = "";
-
-  options.forEach(opt => {
-    const card = document.createElement("div");
-    card.className = "vote-card";
-
-    card.innerHTML = `
-      <img src="${opt.img}" class="vote-img" onerror="this.style.opacity=0.4">
-      <div class="vote-title">${opt.title}</div>
-      <div class="vote-info">${opt.info}</div>
-    `;
-
-    card.onclick = () => {
-      if (selected.includes(opt.id)) {
-        selected = selected.filter(id => id !== opt.id);
-        card.classList.remove("selected");
-      } else if (selected.length < MAX_PICKS) {
-        selected.push(opt.id);
-        card.classList.add("selected");
-      }
-      submitBtn.disabled = selected.length === 0;
-    };
-
-    grid.appendChild(card);
-  });
-}
-
-buildCards();
-
-/* =====================================================
-   VOTE
-===================================================== */
-submitBtn.onclick = async () => {
-  if (!fingerprint || selected.length === 0) return;
-
-  submitBtn.disabled = true;
-
-  const res = await fetch(API + "/vote", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fingerprint,
-      picks: selected,
-      lang: navigator.language || "",
-      tz: Intl.DateTimeFormat().resolvedOptions().timeZone || ""
-    })
-  });
-
-  const data = await res.json();
-  showResults(data.stats);
-};
-
-/* =====================================================
-   STATS
-===================================================== */
-async function loadStats() {
-  const res = await fetch(API + "/stats");
-  const data = await res.json();
-  showResults(data.stats);
-}
-
-function showResults(stats) {
-  grid.style.display = "none";
-  submitBtn.style.display = "none";
-  document.getElementById("voteBanner").classList.add("show");
-
-  const chart = document.getElementById("chartSection");
-  chart.style.display = "block";
-
-  const sum = stats.reduce((a, b) => a + b, 0);
-
-  chart.innerHTML =
-    `<h2 class="vote-title-gradient">Live results</h2>` +
-    stats.map((v, i) => {
-      const p = sum ? Math.round((v / sum) * 100) : 0;
-      return `
-        <div class="chart-bar-wrap">
-          <span class="chart-bar-label">Game ${i + 1}</span>
-          <div class="chart-bar">
-            <div class="chart-bar-inner" style="width:${p * 2}px"></div>
-          </div>
-          <span class="chart-val">${v} (${p}%)</span>
-        </div>`;
-    }).join("");
-}
-
 /* =====================================================
    HEADER WAVE INIT
 ===================================================== */
@@ -293,6 +181,129 @@ function waveText(id) {
   });
 }
 waveText("header-global-games");
+
+/* =====================================================
+   HEADER SHRINK & ACTIVE BUTTON
+===================================================== */
+const header = document.querySelector('.site-header');
+window.addEventListener('scroll', () => {
+  if(window.scrollY > 50){
+    header.classList.add('shrink');
+  } else {
+    header.classList.remove('shrink');
+  }
+});
+
+const currentPage = location.pathname.split("/").pop();
+document.querySelectorAll('.nav-menu a').forEach(btn => {
+  if(btn.getAttribute('href') === currentPage){
+    btn.classList.add('active');
+  } else {
+    btn.classList.remove('active');
+  }
+});
+
+/* =====================================================
+   KONFIG & FINGERPRINT
+===================================================== */
+const API = "http://localhost:5050";
+const MAX_PICKS = 3;
+let fingerprint = null;
+let selected = [];
+const grid = document.getElementById("voteGrid");
+const submitBtn = document.getElementById("submitVote");
+
+(async () => {
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+  fingerprint = result.visitorId;
+  loadStats();
+})();
+
+/* =====================================================
+   BUILD CARDS
+===================================================== */
+const options = Array.from({length:20}, (_,i)=>({
+  id:i+1,
+  title:"Game "+(i+1),
+  img:"option"+(i+1)+".jpg",
+  info:"Awesome entry "+(i+1)
+}));
+
+function buildCards(){
+  grid.innerHTML = "";
+  options.forEach(opt=>{
+    const card = document.createElement("div");
+    card.className = "vote-card";
+    card.innerHTML = `
+      <img src="${opt.img}" class="vote-img" onerror="this.style.opacity=0.4">
+      <div class="vote-title">${opt.title}</div>
+      <div class="vote-info">${opt.info}</div>
+    `;
+    card.onclick = ()=>{
+      if(selected.includes(opt.id)){
+        selected = selected.filter(id=>id!==opt.id);
+        card.classList.remove("selected");
+      } else if(selected.length < MAX_PICKS){
+        selected.push(opt.id);
+        card.classList.add("selected");
+      }
+      submitBtn.disabled = selected.length===0;
+    };
+    grid.appendChild(card);
+  });
+}
+buildCards();
+
+/* =====================================================
+   VOTE
+===================================================== */
+submitBtn.onclick = async ()=>{
+  if(!fingerprint||selected.length===0) return;
+  submitBtn.disabled=true;
+  const res = await fetch(API+"/vote",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      fingerprint,
+      picks:selected,
+      lang:navigator.language||"",
+      tz:Intl.DateTimeFormat().resolvedOptions().timeZone||""
+    })
+  });
+  const data = await res.json();
+  showResults(data.stats);
+};
+
+/* =====================================================
+   STATS
+===================================================== */
+async function loadStats(){
+  const res = await fetch(API+"/stats");
+  const data = await res.json();
+  showResults(data.stats);
+}
+
+function showResults(stats){
+  grid.style.display="none";
+  submitBtn.style.display="none";
+  document.getElementById("voteBanner").classList.add("show");
+  const chart = document.getElementById("chartSection");
+  chart.style.display="block";
+  const sum = stats.reduce((a,b)=>a+b,0);
+  chart.innerHTML = `<h2 class="vote-title-gradient">Live results</h2>`+
+    stats.map((v,i)=>{
+      const p=sum?Math.round((v/sum)*100):0;
+      return `
+        <div class="chart-bar-wrap">
+          <span class="chart-bar-label">Game ${i+1}</span>
+          <div class="chart-bar">
+            <div class="chart-bar-inner" style="width:${p*2}px"></div>
+          </div>
+          <span class="chart-val">${v} (${p}%)</span>
+        </div>`;
+    }).join("");
+}
 </script>
 
 <footer style="text-align:center; padding:20px; font-size:0.9em; color:#555; border-top:1px solid #ccc; margin-top:40px;">
