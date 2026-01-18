@@ -1,153 +1,120 @@
 // npm install express cors sqlite3 crypto
-const express = require('express');
-const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
-const crypto = require('crypto');
+const express = require("express");
+const cors = require("cors");
+const sqlite3 = require("sqlite3").verbose();
+const crypto = require("crypto");
 
 const app = express();
-const db = new sqlite3.Database('./votes.db');
+const db = new sqlite3.Database("./votes.db");
 
 app.use(cors());
 app.use(express.json());
 
-// ==================
-// KONFIGURATION
-// ==================
-const OPTIONS_COUNT = 20;
+/* =========================
+   DB SETUP
+========================= */
+db.run(`
+CREATE TABLE IF NOT EXISTS votes (
+  voter_hash TEXT PRIMARY KEY,
+  created_at INTEGER
+)`);
 
-// ==================
-// DATENBANK
-// ==================
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS votes (
-      personHash TEXT PRIMARY KEY,
-      fingerprint TEXT,
-      ipHash TEXT,
-      userAgent TEXT,
-      language TEXT,
-      timezone TEXT,
-      votedAt INTEGER
-    )
-  `);
+db.run(`
+CREATE TABLE IF NOT EXISTS stats (
+  option INTEGER PRIMARY KEY,
+  votes INTEGER
+)`);
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS stats (
-      option INTEGER PRIMARY KEY,
-      votes INTEGER
-    )
-  `);
-
-  for (let i = 1; i <= OPTIONS_COUNT; i++) {
-    db.run(
-      'INSERT OR IGNORE INTO stats(option, votes) VALUES (?, 0)',
-      i
-    );
-  }
-});
-
-// ==================
-// HELFER
-// ==================
-function sha256(data) {
-  return crypto.createHash('sha256').update(data).digest('hex');
-}
-
-function getIp(req) {
-  return (
-    req.headers['x-forwarded-for']?.split(',')[0] ||
-    req.socket.remoteAddress ||
-    ''
+for (let i = 1; i <= 20; i++) {
+  db.run(
+    "INSERT OR IGNORE INTO stats(option,votes) VALUES (?,0)",
+    i
   );
 }
 
-// ==================
-// VOTE ENDPOINT
-// ==================
-app.post('/vote', (req, res) => {
-  const { fingerprint, picks, lang, tz } = req.body;
+/* =========================
+   HELPERS
+========================= */
+function getSubnet(ip) {
+  if (!ip) return "0.0.0";
+  if (ip.includes(":")) return ip.split(":").slice(0, 3).join(":");
+  return ip.split(".").slice(0, 3).join(".");
+}
 
-  if (!fingerprint || !Array.isArray(picks)) {
-    return res.json({ ok: false, error: 'Invalid request' });
-  }
+function hashVoter({ fingerprint, ip, ua, lang, tz }) {
+  const raw = [
+    fingerprint,
+    getSubnet(ip),
+    ua.slice(0, 80),
+    lang,
+    tz
+  ].join("|");
 
-  // Picks validieren
-  const cleanPicks = [...new Set(picks)].filter(
-    p => Number.isInteger(p) && p >= 1 && p <= OPTIONS_COUNT
+  return crypto
+    .createHash("sha256")
+    .update(raw)
+    .digest("hex");
+}
+
+function getStats(res) {
+  db.all(
+    "SELECT option, votes FROM stats ORDER BY option",
+    (err, rows) => {
+      const stats = rows.map(r => r.votes);
+      res.json({ ok: true, stats });
+    }
   );
+}
 
-  if (cleanPicks.length === 0 || cleanPicks.length > 3) {
-    return res.json({ ok: false, error: 'Invalid picks' });
-  }
+/* =========================
+   VOTE ENDPOINT
+========================= */
+app.post("/vote", (req, res) => {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress;
 
-  const ipHash = sha256(getIp(req));
-  const ua = req.headers['user-agent'] || '';
-
-  // STARKER PERSONEN-HASH
-  const personHash = sha256(
-    fingerprint +
-    ipHash +
-    ua +
-    (lang || '') +
-    (tz || '')
-  );
-
-  const votedAt = Date.now();
+  const voterHash = hashVoter({
+    fingerprint: req.body.fingerprint,
+    ip,
+    ua: req.headers["user-agent"] || "",
+    lang: req.body.lang || "",
+    tz: req.body.tz || ""
+  });
 
   db.get(
-    'SELECT personHash FROM votes WHERE personHash = ?',
-    personHash,
+    "SELECT voter_hash FROM votes WHERE voter_hash=?",
+    voterHash,
     (err, row) => {
-      if (row) {
-        return res.json({ ok: false, reason: 'duplicate' });
+      if (row) return getStats(res);
+
+      const picks = req.body.picks;
+      if (!Array.isArray(picks) || picks.length < 1 || picks.length > 3) {
+        return res.json({ ok: false });
       }
 
       db.run(
-        `
-        INSERT INTO votes
-        (personHash, fingerprint, ipHash, userAgent, language, timezone, votedAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        `,
-        personHash,
-        fingerprint,
-        ipHash,
-        ua,
-        lang || '',
-        tz || '',
-        votedAt,
-        () => {
-          cleanPicks.forEach(opt => {
-            db.run(
-              'UPDATE stats SET votes = votes + 1 WHERE option = ?',
-              opt
-            );
-          });
-
-          sendStats(res, true);
-        }
+        "INSERT INTO votes(voter_hash, created_at) VALUES (?,?)",
+        voterHash,
+        Date.now()
       );
+
+      picks.forEach(p =>
+        db.run("UPDATE stats SET votes=votes+1 WHERE option=?", p)
+      );
+
+      getStats(res);
     }
   );
 });
 
-// ==================
-// STATS ENDPOINT
-// ==================
-app.get('/stats', (req, res) => {
-  sendStats(res, true);
+/* =========================
+   STATS
+========================= */
+app.get("/stats", (req, res) => {
+  getStats(res);
 });
 
-function sendStats(res, ok) {
-  db.all(
-    'SELECT option, votes FROM stats ORDER BY option ASC',
-    (err, rows) => {
-      const stats = rows.map(r => r.votes);
-      res.json({ ok, stats });
-    }
-  );
-}
-
-// ==================
-app.listen(5050, () => {
-  console.log('🔒 Secure Vote Server running on http://localhost:5050');
-});
+app.listen(5050, () =>
+  console.log("✅ Vote server running on http://localhost:5050")
+);
