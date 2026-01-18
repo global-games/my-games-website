@@ -1,7 +1,8 @@
-// npm install express cors sqlite3
+// npm install express cors sqlite3 crypto
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
+const crypto = require('crypto');
 
 const app = express();
 const db = new sqlite3.Database('./votes.db');
@@ -9,12 +10,18 @@ const db = new sqlite3.Database('./votes.db');
 app.use(cors());
 app.use(express.json());
 
-// --- DB INIT ---
+// --- CONFIG ---
+const VOTE_COOLDOWN_MS = 1000 * 60 * 60 * 24; // 24h
+
+// --- DB ---
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS votes (
-      fingerprint TEXT PRIMARY KEY,
-      picks TEXT
+      personHash TEXT PRIMARY KEY,
+      fingerprint TEXT,
+      ipHash TEXT,
+      userAgent TEXT,
+      votedAt INTEGER
     )
   `);
 
@@ -26,48 +33,65 @@ db.serialize(() => {
   `);
 
   for (let i = 1; i <= 20; i++) {
-    db.run(
-      'INSERT OR IGNORE INTO stats(option, votes) VALUES (?, 0)',
-      i
-    );
+    db.run('INSERT OR IGNORE INTO stats(option,votes) VALUES (?,0)', i);
   }
 });
 
+// --- HELPERS ---
+function sha256(data) {
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
+
+function getIp(req) {
+  return (
+    req.headers['x-forwarded-for']?.split(',')[0] ||
+    req.socket.remoteAddress ||
+    ''
+  );
+}
+
 // --- VOTE ---
 app.post('/vote', (req, res) => {
-  const { fingerprint, picks } = req.body;
+  const { fingerprint, picks, tz, lang } = req.body;
 
-  // Validierung
-  if (
-    !fingerprint ||
-    !Array.isArray(picks) ||
-    picks.length < 1 ||
-    picks.length > 3
-  ) {
-    return res.json({ ok: false, error: 'Invalid data' });
+  if (!fingerprint || !Array.isArray(picks)) {
+    return res.json({ ok: false });
   }
 
-  // Nur 1–20, keine Duplikate
   const cleanPicks = [...new Set(picks)].filter(
     p => Number.isInteger(p) && p >= 1 && p <= 20
   );
-
-  if (cleanPicks.length === 0) {
-    return res.json({ ok: false, error: 'Invalid picks' });
+  if (!cleanPicks.length || cleanPicks.length > 3) {
+    return res.json({ ok: false });
   }
 
+  const ipHash = sha256(getIp(req));
+  const ua = req.headers['user-agent'] || '';
+
+  const personHash = sha256(
+    fingerprint + ipHash + ua + (lang || '') + (tz || '')
+  );
+
+  const now = Date.now();
+
   db.get(
-    'SELECT fingerprint FROM votes WHERE fingerprint = ?',
-    fingerprint,
+    'SELECT votedAt FROM votes WHERE personHash = ?',
+    personHash,
     (err, row) => {
       if (row) {
-        return sendStats(res, false);
+        return res.json({ ok: false, reason: 'duplicate' });
       }
 
       db.run(
-        'INSERT INTO votes(fingerprint, picks) VALUES (?, ?)',
+        `
+        INSERT INTO votes(personHash,fingerprint,ipHash,userAgent,votedAt)
+        VALUES (?,?,?,?,?)
+        `,
+        personHash,
         fingerprint,
-        JSON.stringify(cleanPicks),
+        ipHash,
+        ua,
+        now,
         () => {
           cleanPicks.forEach(opt => {
             db.run(
@@ -75,7 +99,6 @@ app.post('/vote', (req, res) => {
               opt
             );
           });
-
           sendStats(res, true);
         }
       );
@@ -84,21 +107,17 @@ app.post('/vote', (req, res) => {
 });
 
 // --- STATS ---
-app.get('/stats', (req, res) => {
-  sendStats(res, true);
-});
+app.get('/stats', (_, res) => sendStats(res, true));
 
-// --- HELPER ---
 function sendStats(res, ok) {
   db.all(
-    'SELECT option, votes FROM stats ORDER BY option ASC',
+    'SELECT option,votes FROM stats ORDER BY option ASC',
     (err, rows) => {
-      const stats = rows.map(r => r.votes);
-      res.json({ ok, stats });
+      res.json({ ok, stats: rows.map(r => r.votes) });
     }
   );
 }
 
 app.listen(5050, () =>
-  console.log('✅ Vote server running on http://localhost:5050')
+  console.log('🔒 Secure vote server running on :5050')
 );
