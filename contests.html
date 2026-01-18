@@ -60,17 +60,18 @@
       display: flex;
       gap: 0.07em;
       user-select: none;
+      color: #fff; /* weiße Buchstaben */
     }
 
     .logo-anim span {
       display: inline-block;
-      animation: strongWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
+      animation: lightWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
       animation-delay: calc(var(--char-index) * 0.1s);
     }
 
-    @keyframes strongWave {
+    @keyframes lightWave {
       0%,100% { transform: translateY(0) scale(1) rotate(0deg); }
-      50% { transform: translateY(-20px) scale(1.1) rotate(-3deg); }
+      50% { transform: translateY(-8px) scale(1.03) rotate(-1deg); } /* leichte Welle */
     }
 
     /* ================= NAV BUTTONS ================= */
@@ -96,7 +97,7 @@
       transition: background .18s, transform .13s, box-shadow .2s, color .18s;
       box-shadow: 0 2px 14px rgba(255,255,255,0.25);
       display: inline-block;
-      margin-top: 4px;
+      margin-top: 0px; /* Button nach oben verschoben */
     }
 
     .nav-menu a.active {
@@ -135,7 +136,6 @@
 
 <body>
 
-<!-- ================= HEADER ================= -->
 <header class="site-header">
   <div class="header-inner">
     <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
@@ -150,7 +150,6 @@
   </div>
 </header>
 
-<!-- ================= MAIN ================= -->
 <div class="main-content">
   <div class="vote-title-gradient">Chrismas contest 2025 – by global-games</div>
   <div class="subtext">Select up to three projects</div>
@@ -165,47 +164,39 @@
 <script src="wave-title.js"></script>
 
 <script>
-/* =====================================================
-   HEADER WAVE INIT
-===================================================== */
-function waveText(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const text = el.textContent;
-  el.innerHTML = '';
-  [...text].forEach((char, i) => {
-    const span = document.createElement('span');
-    span.textContent = char;
-    span.style.setProperty('--char-index', i);
+/* ================= HEADER WAVE ================= */
+function waveText(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const text=el.textContent;
+  el.innerHTML='';
+  [...text].forEach((char,i)=>{
+    const span=document.createElement('span');
+    span.textContent=char;
+    span.style.setProperty('--char-index',i);
     el.appendChild(span);
   });
 }
 waveText("header-global-games");
 
-/* =====================================================
-   HEADER SHRINK & ACTIVE BUTTON
-===================================================== */
+/* ================= HEADER SHRINK & ACTIVE BUTTON ================= */
 const header = document.querySelector('.site-header');
 window.addEventListener('scroll', () => {
-  if(window.scrollY > 50){
-    header.classList.add('shrink');
-  } else {
-    header.classList.remove('shrink');
-  }
+  if(window.scrollY > 50) header.classList.add('shrink');
+  else header.classList.remove('shrink');
 });
 
-const currentPage = location.pathname.split("/").pop();
-document.querySelectorAll('.nav-menu a').forEach(btn => {
-  if(btn.getAttribute('href') === currentPage){
-    btn.classList.add('active');
-  } else {
-    btn.classList.remove('active');
-  }
+// Fix für Back-Button: immer nur aktueller Button aktiv
+window.addEventListener('pageshow', () => {
+  const navLinks = document.querySelectorAll('.nav-menu a');
+  navLinks.forEach(link => link.classList.remove('active'));
+  const current = location.pathname.split("/").pop();
+  navLinks.forEach(link => {
+    if(link.getAttribute('href') === current) link.classList.add('active');
+  });
 });
 
-/* =====================================================
-   KONFIG & FINGERPRINT
-===================================================== */
+/* ================= KONFIG & FINGERPRINT ================= */
 const API = "http://localhost:5050";
 const MAX_PICKS = 3;
 let fingerprint = null;
@@ -220,9 +211,7 @@ const submitBtn = document.getElementById("submitVote");
   loadStats();
 })();
 
-/* =====================================================
-   BUILD CARDS
-===================================================== */
+/* ================= BUILD CARDS ================= */
 const options = Array.from({length:20}, (_,i)=>({
   id:i+1,
   title:"Game "+(i+1),
@@ -255,9 +244,7 @@ function buildCards(){
 }
 buildCards();
 
-/* =====================================================
-   VOTE
-===================================================== */
+/* ================= VOTE ================= */
 submitBtn.onclick = async ()=>{
   if(!fingerprint||selected.length===0) return;
   submitBtn.disabled=true;
@@ -275,9 +262,7 @@ submitBtn.onclick = async ()=>{
   showResults(data.stats);
 };
 
-/* =====================================================
-   STATS
-===================================================== */
+/* ================= STATS ================= */
 async function loadStats(){
   const res = await fetch(API+"/stats");
   const data = await res.json();
