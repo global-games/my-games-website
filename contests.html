@@ -10,24 +10,84 @@
   <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 
   <style>
-    body { background:#101729!important; margin:0; }
-    /* ⚠️ DEIN VORHANDENES CSS BLEIBT UNVERÄNDERT ⚠️ */
+    /* ================= GLOBAL ================= */
+    body {
+      background:#101729!important;
+      margin:0;
+      padding-top: 120px; /* Platz für fixen Header */
+    }
+
+    /* ================= HEADER ================= */
+    .site-header {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+
+      background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
+      box-shadow: 0 6px 24px #8e24aa59;
+      border-bottom: 3px solid #8e24aa;
+      animation: headerGradient 8s linear infinite alternate;
+    }
+
+    @keyframes headerGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 87px;
+      padding-bottom: 16px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ================= LOGO ================= */
+    .logo-anim {
+      font-size: 2.09rem;
+      font-weight: bold;
+      letter-spacing: .14em;
+      margin: 1.2em 0 0.1em 0;
+      display: flex;
+      gap: 0.07em;
+      user-select: none;
+    }
+
+    .logo-anim span {
+      display: inline-block;
+      animation: smoothWave 3.2s ease-in-out infinite;
+      animation-delay: calc(var(--char-index) * 0.12s);
+    }
+
+    @keyframes smoothWave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
   </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
 <header class="site-header">
-  <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
-  <nav class="nav-menu">
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="contests.html" class="active">My Contests</a></li>
-      <li><a href="comingsoon.html">Coming soon</a></li>
-    </ul>
-  </nav>
+  <div class="header-inner">
+    <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="contests.html" class="active">My Contests</a></li>
+        <li><a href="comingsoon.html">Coming soon</a></li>
+      </ul>
+    </nav>
+  </div>
 </header>
 
+<!-- ================= MAIN ================= -->
 <div class="main-content">
   <div class="vote-title-gradient" style="font-size:2.2rem;">
     Chrismas contest 2025 – by global-games
@@ -78,7 +138,7 @@ const grid = document.getElementById("voteGrid");
 const submitBtn = document.getElementById("submitVote");
 
 /* =====================================================
-   FINGERPRINT ERZEUGEN
+   FINGERPRINT
 ===================================================== */
 (async () => {
   const fp = await FingerprintJS.load();
@@ -88,7 +148,7 @@ const submitBtn = document.getElementById("submitVote");
 })();
 
 /* =====================================================
-   CARDS BAUEN
+   CARDS
 ===================================================== */
 function buildCards() {
   grid.innerHTML = "";
@@ -111,7 +171,6 @@ function buildCards() {
         selected.push(opt.id);
         card.classList.add("selected");
       }
-
       submitBtn.disabled = selected.length === 0;
     };
 
@@ -122,7 +181,7 @@ function buildCards() {
 buildCards();
 
 /* =====================================================
-   VOTE ABSENDEN
+   VOTE
 ===================================================== */
 submitBtn.onclick = async () => {
   if (!fingerprint || selected.length === 0) return;
@@ -145,7 +204,7 @@ submitBtn.onclick = async () => {
 };
 
 /* =====================================================
-   STATS LADEN
+   STATS
 ===================================================== */
 async function loadStats() {
   const res = await fetch(API + "/stats");
@@ -170,7 +229,7 @@ function showResults(stats) {
       return `
         <div class="chart-bar-wrap">
           <span class="chart-bar-label">Game ${i + 1}</span>
-          <div class="chart-bar" style="width:220px;">
+          <div class="chart-bar">
             <div class="chart-bar-inner" style="width:${p * 2}px"></div>
           </div>
           <span class="chart-val">${v} (${p}%)</span>
@@ -179,7 +238,7 @@ function showResults(stats) {
 }
 
 /* =====================================================
-   HEADER WAVE
+   HEADER WAVE INIT
 ===================================================== */
 function waveText(id) {
   const el = document.getElementById(id);
