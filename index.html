@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>GLOBAL-GAMES | Games, Projects & Community</title>
 <meta name="description" content="Homepage of the Scratch account global-games. Vote in contests, use ScratchAI and explore projects.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="stylesheet" href="style-gradient.css">
 
 <style>
@@ -20,9 +20,6 @@ html, body {
 
 body {
   padding-top: 120px; /* Platz für fixen Header */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   overflow-x: hidden;
 }
 
@@ -37,6 +34,12 @@ body {
   box-shadow: 0 6px 24px #8e24aa59;
   border-bottom: 3px solid #8e24aa;
   animation: headerGradient 8s linear infinite alternate;
+  transition: all 0.3s ease-in-out;
+}
+
+.site-header.shrink {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 @keyframes headerGradient {
@@ -51,6 +54,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: all 0.3s ease-in-out;
 }
 
 /* ================= LOGO ================= */
@@ -98,14 +102,21 @@ body {
   background: transparent;
   transition: background .18s, transform .13s, box-shadow .2s, color .18s;
   box-shadow: 0 2px 14px rgba(255,255,255,0.25);
+  display: inline-block;
 }
 
-.nav-menu a.active,
+.nav-menu a.active {
+  background: #fff;
+  color: #6a1b9a;
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(255,255,255,0.75);
+}
+
 .nav-menu a:hover {
   background: #fff;
   color: #6a1b9a;
-  transform: scale(1.07);
-  box-shadow: 0 6px 22px rgba(255,255,255,0.6);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(255,255,255,0.6);
 }
 
 /* ================= IMAGE + GLOW ================= */
@@ -115,9 +126,8 @@ body {
   height: 105px;
   margin: 40px auto 28px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1;
+  justify-content: center;
 }
 
 .header-image-container::before {
@@ -126,23 +136,13 @@ body {
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  z-index: -1;
   filter: blur(30px);
-  background: linear-gradient(270deg,#1a237e,#8e24aa,#ff4081);
-  background-size: 600% 600%;
-  animation: glowGradient 8s ease-in-out infinite, glowPulse 3s ease-in-out infinite alternate;
-}
-
-@keyframes glowGradient {
-  0% {background-position:0% 50%}
-  50% {background-position:100% 50%}
-  100% {background-position:0% 50%}
-}
-
-@keyframes glowPulse {
-  0% {transform:scale(.9);opacity:.6}
-  50% {transform:scale(1.05);opacity:1}
-  100% {transform:scale(.9);opacity:.6}
+  background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
+  background-size: 300% 100%;
+  animation: animateGradient 3s linear infinite alternate;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .header-image-container img {
@@ -150,18 +150,14 @@ body {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 7px 30px #8e24aa77;
+  position: relative;
   z-index: 2;
 }
 
 /* ================= TITLE ================= */
 h1 {
-  font-size: 3rem;
-  font-weight: 900;
-  letter-spacing: 1.5px;
   text-align: center;
   color: #fff;
-  margin-top: 20px;
   margin-bottom: 36px;
 }
 
@@ -172,11 +168,12 @@ h1 {
   max-width: 700px;
   width: 100%;
   padding: 38px 28px;
-  margin-bottom: 42px;
+  margin: 0 auto 42px;
   box-shadow: 0 8px 44px #8e24aa99;
   text-align: center;
 }
 
+/* ================= TEXTBOX ================= */
 .content-box {
   background: linear-gradient(90deg,#1a237e,#8e24aa 57%,#ff4081 93%);
   background-size: 210% 100%;
@@ -196,6 +193,7 @@ h1 {
   margin-bottom: 14px;
 }
 
+/* ================= BUTTON ================= */
 .scratch-btn {
   display: inline-block;
   margin-top: 30px;
@@ -225,13 +223,13 @@ footer {
   font-size: .9em;
   color: #555;
   border-top: 1px solid #ccc;
-  width: 100%;
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
 <header class="site-header">
   <div class="header-inner">
     <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
@@ -260,9 +258,9 @@ footer {
       and explore what we are working on.
     </p>
     <ul>
-      <li>🎮 Vote in Scratch contests</li>
-      <li>🤖 Use ScratchAI</li>
-      <li>📢 Check upcoming projects</li>
+      <li>🎮 Vote in Scratch contests like the Easter & Christmas Contest</li>
+      <li>🤖 Use ScratchAI to generate Scratch code or get help</li>
+      <li>📢 Stay up to date with upcoming projects</li>
     </ul>
   </div>
 
@@ -279,20 +277,37 @@ footer {
 
 <script src="wave-title.js"></script>
 <script>
-function waveText(id){
-  const el=document.getElementById(id);
-  if(!el) return;
-  const text=el.textContent;
-  el.innerHTML="";
-  [...text].forEach((c,i)=>{
-    const s=document.createElement("span");
-    s.textContent=c;
-    s.style.setProperty("--char-index",i);
-    el.appendChild(s);
+  // Wave effect für Header und Haupttitel
+  function waveText(id){
+    const el=document.getElementById(id);
+    if(!el) return;
+    const text=el.textContent;
+    el.innerHTML="";
+    [...text].forEach((c,i)=>{
+      const s=document.createElement("span");
+      s.textContent=c;
+      s.style.setProperty("--char-index",i);
+      el.appendChild(s);
+    });
+  }
+  waveText("header-global-games");
+  waveText("page-global-games");
+
+  // Aktiver Nav-Button je nach Seite
+  window.addEventListener('pageshow', () => {
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    navLinks.forEach(link => link.classList.remove('active'));
+    const current = location.pathname.split("/").pop();
+    navLinks.forEach(link => {
+      if(link.getAttribute('href') === current) link.classList.add('active');
+    });
   });
-}
-waveText("header-global-games");
-waveText("page-global-games");
+
+  // Header shrink on scroll
+  const header=document.querySelector(".site-header");
+  window.addEventListener("scroll", () => {
+    window.scrollY>50?header.classList.add("shrink"):header.classList.remove("shrink");
+  });
 </script>
 
 </body>
