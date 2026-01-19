@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>GLOBAL-GAMES | Games, Projects & Community</title>
 <meta name="description" content="Homepage of the Scratch account global-games. Vote in contests, use ScratchAI and explore projects.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style-gradient.css">
 
 <style>
@@ -19,7 +19,10 @@ html, body {
 }
 
 body {
-  padding-top: 120px;
+  padding-top: 120px; /* Platz für fixen Header */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow-x: hidden;
 }
 
@@ -34,11 +37,6 @@ body {
   box-shadow: 0 6px 24px #8e24aa59;
   border-bottom: 3px solid #8e24aa;
   animation: headerGradient 8s linear infinite alternate;
-  transition: all .3s ease-in-out;
-}
-
-.site-header.shrink {
-  padding: 4px 0;
 }
 
 @keyframes headerGradient {
@@ -85,16 +83,21 @@ body {
   gap: 1.2em;
   margin: 0;
   padding: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-menu a {
   text-decoration: none;
   color: #fff;
   font-weight: 600;
+  font-size: 1.05rem;
   padding: 11px 28px;
   border-radius: 30px;
   border: 2px solid #fff;
-  transition: .2s;
+  background: transparent;
+  transition: background .18s, transform .13s, box-shadow .2s, color .18s;
+  box-shadow: 0 2px 14px rgba(255,255,255,0.25);
 }
 
 .nav-menu a.active,
@@ -102,6 +105,7 @@ body {
   background: #fff;
   color: #6a1b9a;
   transform: scale(1.07);
+  box-shadow: 0 6px 22px rgba(255,255,255,0.6);
 }
 
 /* ================= IMAGE + GLOW ================= */
@@ -110,6 +114,10 @@ body {
   width: 182px;
   height: 105px;
   margin: 40px auto 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
 }
 
 .header-image-container::before {
@@ -118,10 +126,23 @@ body {
   width: 220px;
   height: 220px;
   border-radius: 50%;
+  z-index: -1;
   filter: blur(30px);
-  background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
-  background-size: 300% 100%;
-  animation: animateGradient 3s linear infinite alternate;
+  background: linear-gradient(270deg,#1a237e,#8e24aa,#ff4081);
+  background-size: 600% 600%;
+  animation: glowGradient 8s ease-in-out infinite, glowPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowGradient {
+  0% {background-position:0% 50%}
+  50% {background-position:100% 50%}
+  100% {background-position:0% 50%}
+}
+
+@keyframes glowPulse {
+  0% {transform:scale(.9);opacity:.6}
+  50% {transform:scale(1.05);opacity:1}
+  100% {transform:scale(.9);opacity:.6}
 }
 
 .header-image-container img {
@@ -129,14 +150,18 @@ body {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  position: relative;
+  box-shadow: 0 7px 30px #8e24aa77;
   z-index: 2;
 }
 
 /* ================= TITLE ================= */
 h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
   text-align: center;
   color: #fff;
+  margin-top: 20px;
   margin-bottom: 36px;
 }
 
@@ -147,12 +172,11 @@ h1 {
   max-width: 700px;
   width: 100%;
   padding: 38px 28px;
-  margin: 0 auto 42px;
+  margin-bottom: 42px;
   box-shadow: 0 8px 44px #8e24aa99;
   text-align: center;
 }
 
-/* === TEXTBOX (SYNC WITH BUTTON) === */
 .content-box {
   background: linear-gradient(90deg,#1a237e,#8e24aa 57%,#ff4081 93%);
   background-size: 210% 100%;
@@ -172,7 +196,6 @@ h1 {
   margin-bottom: 14px;
 }
 
-/* ================= BUTTON ================= */
 .scratch-btn {
   display: inline-block;
   margin-top: 30px;
@@ -202,6 +225,7 @@ footer {
   font-size: .9em;
   color: #555;
   border-top: 1px solid #ccc;
+  width: 100%;
 }
 </style>
 </head>
@@ -236,21 +260,9 @@ footer {
       and explore what we are working on.
     </p>
     <ul>
-      <li>
-        🎮 Vote in Scratch contests like the
-        <a href="contests.html" style="color:#fff;text-decoration:underline;">Easter Contest</a>
-        and
-        <a href="contests.html" style="color:#fff;text-decoration:underline;">Christmas Contest</a>
-      </li>
-      <li>
-        🤖 Use <a href="/textgenerator" style="color:#fff;text-decoration:underline;">ScratchAI</a>
-        to generate Scratch code or ask questions about Scratch
-      </li>
-      <li>
-        📢 Check updates on the
-        <a href="comingsoon.html" style="color:#fff;text-decoration:underline;">Coming soon</a>
-        page
-      </li>
+      <li>🎮 Vote in Scratch contests</li>
+      <li>🤖 Use ScratchAI</li>
+      <li>📢 Check upcoming projects</li>
     </ul>
   </div>
 
@@ -281,11 +293,6 @@ function waveText(id){
 }
 waveText("header-global-games");
 waveText("page-global-games");
-
-const header=document.querySelector(".site-header");
-window.addEventListener("scroll",()=>{
-  window.scrollY>50?header.classList.add("shrink"):header.classList.remove("shrink");
-});
 </script>
 
 </body>
