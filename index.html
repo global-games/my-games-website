@@ -23,6 +23,102 @@ body {
   overflow-x: hidden;
 }
 
+/* ================= HEADER ================= */
+.site-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  background: linear-gradient(90deg,#1a237e,#8e24aa 70%,#ff4081 100%);
+  box-shadow: 0 6px 24px #8e24aa59;
+  border-bottom: 3px solid #8e24aa;
+  animation: headerGradient 8s linear infinite alternate;
+  transition: all 0.3s ease-in-out;
+}
+
+.site-header.shrink {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+@keyframes headerGradient {
+  0% {background-position:0% 50%}
+  100% {background-position:100% 50%}
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+/* ================= LOGO ================= */
+.logo-anim {
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: .14em;
+  margin: .4em 0 0 0;
+  display: flex;
+  gap: .07em;
+  user-select: none;
+  color: #fff;
+}
+
+.logo-anim span {
+  display: inline-block;
+  animation: lightWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
+  animation-delay: calc(var(--char-index) * .1s);
+}
+
+@keyframes lightWave {
+  0%,100% {transform:translateY(0)}
+  50% {transform:translateY(-8px)}
+}
+
+/* ================= NAV ================= */
+.nav-menu ul {
+  list-style: none;
+  display: flex;
+  gap: 1.2em;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-menu a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 11px 28px;
+  border-radius: 30px;
+  border: 2px solid #fff;
+  background: transparent;
+  transition: background .18s, transform .13s, box-shadow .2s, color .18s;
+  box-shadow: 0 2px 14px rgba(255,255,255,0.25);
+  display: inline-block;
+}
+
+.nav-menu a.active {
+  background: #fff;
+  color: #6a1b9a;
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(255,255,255,0.75);
+}
+
+.nav-menu a:hover {
+  background: #fff;
+  color: #6a1b9a;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(255,255,255,0.6);
+}
+
 /* ================= IMAGE + GLOW ================= */
 .header-image-container {
   position: relative;
@@ -130,18 +226,24 @@ footer {
 }
 </style>
 </head>
+
 <body>
 
 <!-- ================= HEADER ================= -->
-<div id="header-placeholder"></div>
-<script>
-fetch('header.html')
-  .then(resp => resp.text())
-  .then(html => document.getElementById('header-placeholder').innerHTML = html)
-  .then(()=>{ if(window.waveText) waveText("header-global-games"); });
-</script>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="contests.html">My Contests</a></li>
+        <li><a href="comingsoon.html">Coming soon</a></li>
+        <li><a href="/textgenerator">KI Textgenerator</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
-<!-- ================= HEADER IMAGE ================= -->
 <div class="header-image-container">
   <img src="meinbild.jpg" alt="GLOBAL-GAMES">
 </div>
@@ -156,13 +258,9 @@ fetch('header.html')
       and explore what we are working on.
     </p>
     <ul>
-      <li>🎮 Vote in Scratch contests like the 
-        <a href="contests.html" style="color:#fff;text-decoration:underline;">Easter Contest</a> 
-        and 
-        <a href="contests.html" style="color:#fff;text-decoration:underline;">Christmas Contest</a>
-      </li>
-      <li>🤖 Use <a href="/textgenerator" style="color:#fff;text-decoration:underline;">ScratchAI</a> to generate Scratch code or get help</li>
-      <li>📢 Stay up to date with <a href="comingsoon.html" style="color:#fff;text-decoration:underline;">upcoming projects</a></li>
+      <li>🎮 Vote in Scratch contests like the Easter & Christmas Contest</li>
+      <li>🤖 Use ScratchAI to generate Scratch code or get help</li>
+      <li>📢 Stay up to date with upcoming projects</li>
     </ul>
   </div>
 
@@ -179,7 +277,7 @@ fetch('header.html')
 
 <script src="wave-title.js"></script>
 <script>
-  // Wave effect für Haupttitel
+  // Wave effect für Header und Haupttitel
   function waveText(id){
     const el=document.getElementById(id);
     if(!el) return;
@@ -192,18 +290,24 @@ fetch('header.html')
       el.appendChild(s);
     });
   }
+  waveText("header-global-games");
   waveText("page-global-games");
 
-  // Header shrink on scroll (funktioniert auch bei externem Header)
-  const headerObserver = setInterval(()=>{
-    const header=document.querySelector(".site-header");
-    if(header){
-      window.addEventListener("scroll", () => {
-        window.scrollY>50?header.classList.add("shrink"):header.classList.remove("shrink");
-      });
-      clearInterval(headerObserver);
-    }
-  },50);
+  // Aktiver Nav-Button je nach Seite
+  window.addEventListener('pageshow', () => {
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    navLinks.forEach(link => link.classList.remove('active'));
+    const current = location.pathname.split("/").pop();
+    navLinks.forEach(link => {
+      if(link.getAttribute('href') === current) link.classList.add('active');
+    });
+  });
+
+  // Header shrink on scroll
+  const header=document.querySelector(".site-header");
+  window.addEventListener("scroll", () => {
+    window.scrollY>50?header.classList.add("shrink"):header.classList.remove("shrink");
+  });
 </script>
 
 </body>
