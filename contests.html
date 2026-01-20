@@ -153,146 +153,7 @@
 
 <div class="main-content">
 
-  <!-- ================= TITLE ================= -->
-  <div class="vote-title-gradient">
-    Christmas Contest 2025 – GLOBAL-GAMES
-  </div>
-  <div class="subtext" id="voteSubtitle"></div>
-
-  <!-- ================= STATE BOX ================= -->
-  <div id="voteStateBox" class="countdown-box"></div>
-
-  <!-- ================= VOTE GRID ================= -->
-  <div class="vote-grid" id="voteGrid"></div>
-
-  <!-- ================= SUBMIT ================= -->
-  <button class="vote-submit" id="submitVote" disabled>
-    Submit vote
-  </button>
-
-  <!-- ================= CONFIRM ================= -->
-  <div class="vote-banner" id="voteBanner">
-    ✅ Your vote was successfully submitted.
-  </div>
-
-  <!-- ================= RESULTS ================= -->
-  <div id="resultsBox" style="display:none;"></div>
-
-</div>
-
-<!-- ================= STYLES ================= -->
-<style>
-.countdown-box{
-  margin:32px 0;
-  padding:26px;
-  text-align:center;
-  border-radius:26px;
-  background:linear-gradient(120deg,#181c36,#251d3a);
-  color:#fff;
-  font-size:1.35rem;
-  box-shadow:0 8px 44px #8e24aa66;
-}
-
-.vote-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:26px;
-}
-
-.vote-card{
-  position:relative;
-  background:linear-gradient(120deg,#1a237e,#251d3a);
-  border-radius:26px;
-  padding:14px;
-  cursor:pointer;
-  border:3px solid transparent;
-  transition:.2s;
-  box-shadow:0 6px 26px #0006;
-}
-
-.vote-card:hover{transform:scale(1.04)}
-.vote-card.selected{
-  border-color:#ff4081;
-  box-shadow:0 0 0 3px #ff408155;
-}
-
-.vote-check{
-  position:absolute;
-  top:14px;
-  right:14px;
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:#ff4081;
-  color:#fff;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-}
-.vote-card.selected .vote-check{opacity:1}
-
-.vote-img{
-  width:100%;
-  height:130px;
-  object-fit:cover;
-  border-radius:18px;
-  margin-bottom:10px;
-}
-
-.vote-title{color:#fff;font-weight:700}
-.vote-link{font-size:.85rem;color:#ffb3d9;text-decoration:none}
-.vote-link:hover{text-decoration:underline}
-
-.vote-submit{
-  display:block;
-  margin:36px auto 0;
-  padding:16px 52px;
-  border:none;
-  border-radius:40px;
-  font-size:1.15rem;
-  font-weight:700;
-  cursor:pointer;
-  color:#fff;
-  background:linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
-  opacity:.5;
-  transition:.2s;
-}
-.vote-submit:not(:disabled){opacity:1}
-.vote-submit:hover:not(:disabled){transform:scale(1.06)}
-
-.vote-banner{
-  display:none;
-  margin-top:30px;
-  text-align:center;
-  font-weight:700;
-  color:#9effb8;
-}
-.vote-banner.show{display:block}
-
-/* RESULTS */
-.result-row{
-  margin:16px 0;
-}
-.result-label{
-  color:#fff;
-  margin-bottom:6px;
-}
-.result-bar{
-  height:14px;
-  border-radius:8px;
-  background:#2b2f55;
-  overflow:hidden;
-}
-.result-fill{
-  height:100%;
-  background:linear-gradient(90deg,#ff4081,#8e24aa);
-}
-</style>
-
-<!-- ================= SCRIPT ================= -->
-<script src="https://openfpcdn.io/fingerprintjs/v4"></script>
+  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 <script>
 /* ===== CONFIG (HIER ÄNDERN) ===== */
 const VOTE_START = new Date("2027-12-20T00:00:00");
@@ -301,107 +162,134 @@ const RESET_AFTER_DAYS = 90;
 const MAX_PICKS = 3;
 
 /* ===== PROJECTS ===== */
-const projects = Array.from({length:10},(_,i)=>({
-  id:i+1,
-  title:"Project "+(i+1),
-  img:"option"+(i+1)+".jpg",
-  link:"#"
+const projects = Array.from({length:10}, (_, i) => ({
+  id: i+1,
+  title: "Project " + (i+1),
+  img: "option"+(i+1)+".jpg",
+  link: "#"
 }));
 
 /* ===== ELEMENTS ===== */
-const grid=document.getElementById("voteGrid");
-const submitBtn=document.getElementById("submitVote");
-const banner=document.getElementById("voteBanner");
-const stateBox=document.getElementById("voteStateBox");
-const subtitle=document.getElementById("voteSubtitle");
-const resultsBox=document.getElementById("resultsBox");
+const grid = document.getElementById("voteGrid");
+const submitBtn = document.getElementById("submitVote");
+const banner = document.getElementById("voteBanner");
+const stateBox = document.getElementById("voteStateBox");
+const subtitle = document.getElementById("voteSubtitle");
+const resultsBox = document.getElementById("resultsBox");
 
-let selected=[];
-let fingerprint=null;
+let selected = [];
+let fingerprint = null;
 
-/* ===== FINGERPRINT (BEST PRACTICE) ===== */
-(async()=>{
-  const fp=await FingerprintJS.load({monitoring:false});
-  const res=await fp.get();
-  fingerprint=res.visitorId;
-  init();
-})();
-
-/* ===== STATE ===== */
+/* ===== HELPER ===== */
 function getState(){
-  const now=new Date();
-  if(now<VOTE_START) return "countdown";
-  if(now<=VOTE_END) return "vote";
-  if((now-VOTE_END)/86400000 < RESET_AFTER_DAYS) return "results";
+  const now = new Date();
+  if(now < VOTE_START) return "countdown";
+  if(now >= VOTE_START && now <= VOTE_END) return "vote";
+  if(now > VOTE_END && now - VOTE_END < RESET_AFTER_DAYS * 86400000) return "results";
   return "reset";
 }
 
-/* ===== COUNTDOWN ===== */
-function startCountdown(){
-  subtitle.textContent="Voting has not started yet";
-  setInterval(()=>{
-    const d=VOTE_START-new Date();
-    if(d<=0) location.reload();
-    const days=Math.floor(d/86400000);
-    const h=Math.floor(d/3600000)%24;
-    const m=Math.floor(d/60000)%60;
-    stateBox.textContent=`Voting starts in ${days}d ${h}h ${m}m`;
-  },1000);
+function formatCountdown(ms){
+  const days = Math.floor(ms / 86400000);
+  const hours = Math.floor(ms / 3600000) % 24;
+  const minutes = Math.floor(ms / 60000) % 60;
+  const seconds = Math.floor(ms / 1000) % 60;
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-/* ===== BUILD VOTE ===== */
+/* ===== FINGERPRINT INITIALIZATION ===== */
+(async () => {
+  const fp = await FingerprintJS.load({monitoring: false});
+  const res = await fp.get();
+  fingerprint = res.visitorId;
+  init();
+})();
+
+/* ===== COUNTDOWN ===== */
+function startCountdown(target, msg){
+  subtitle.textContent = msg;
+  stateBox.style.display = "block";
+  const interval = setInterval(() => {
+    const diff = target - new Date();
+    if(diff <= 0){
+      clearInterval(interval);
+      location.reload();
+      return;
+    }
+    stateBox.textContent = `${msg}: ${formatCountdown(diff)}`;
+  }, 1000);
+}
+
+/* ===== BUILD VOTE GRID ===== */
 function buildVote(){
-  subtitle.textContent="Select up to 3 projects";
-  stateBox.style.display="none";
-  grid.innerHTML="";
-  projects.forEach(p=>{
-    const c=document.createElement("div");
-    c.className="vote-card";
-    c.innerHTML=`
+  subtitle.textContent = `Select up to ${MAX_PICKS} projects`;
+  stateBox.style.display = "none";
+  grid.innerHTML = "";
+  
+  // Sperre prüfen
+  const voted = localStorage.getItem("vote_" + VOTE_START);
+  if(voted === fingerprint){
+    showResults();
+    return;
+  }
+
+  projects.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "vote-card";
+    card.innerHTML = `
       <div class="vote-check">✓</div>
       <img class="vote-img" src="${p.img}">
       <div class="vote-title">${p.title}</div>
       <a class="vote-link" href="${p.link}" target="_blank">View project</a>
     `;
-    c.onclick=()=>{
+    card.onclick = () => {
       if(selected.includes(p.id)){
-        selected=selected.filter(i=>i!==p.id);
-        c.classList.remove("selected");
-      }else if(selected.length<MAX_PICKS){
+        selected = selected.filter(i => i !== p.id);
+        card.classList.remove("selected");
+      } else if(selected.length < MAX_PICKS){
         selected.push(p.id);
-        c.classList.add("selected");
+        card.classList.add("selected");
       }
-      submitBtn.disabled=selected.length===0;
+      submitBtn.disabled = selected.length === 0;
     };
-    grid.appendChild(c);
+    grid.appendChild(card);
   });
 }
 
-/* ===== SUBMIT (LOCK VIA FINGERPRINT) ===== */
-submitBtn.onclick=()=>{
-  localStorage.setItem("vote_"+VOTE_START,fingerprint);
-  localStorage.setItem("voteData_"+VOTE_START,JSON.stringify(selected));
+/* ===== SUBMIT VOTE ===== */
+submitBtn.onclick = () => {
+  localStorage.setItem("vote_" + VOTE_START, fingerprint);
+  localStorage.setItem("voteData_" + VOTE_START, JSON.stringify(selected));
   banner.classList.add("show");
-  grid.style.display="none";
-  submitBtn.style.display="none";
+  grid.style.display = "none";
+  submitBtn.style.display = "none";
+
+  // Ergebnisse aktualisieren
+  let results = JSON.parse(localStorage.getItem("voteResults") || JSON.stringify(Array(projects.length).fill(0)));
+  selected.forEach(id => { results[id-1] += 1 });
+  localStorage.setItem("voteResults", JSON.stringify(results));
+  setTimeout(showResults, 1000);
 };
 
-/* ===== RESULTS (REAL CHART) ===== */
+/* ===== SHOW RESULTS ===== */
 function showResults(){
-  subtitle.textContent="Voting has ended";
-  stateBox.textContent="Results are published 🎉";
-  resultsBox.style.display="block";
+  subtitle.textContent = "Voting has ended";
+  stateBox.textContent = "Results are published 🎉";
+  stateBox.style.display = "block";
+  resultsBox.style.display = "block";
+  grid.style.display = "none";
+  submitBtn.style.display = "none";
 
-  const data=JSON.parse(localStorage.getItem("voteResults")||"[3,5,7,2,6,1,4,8,2,3]");
-  const sum=data.reduce((a,b)=>a+b,0)||1;
+  const data = JSON.parse(localStorage.getItem("voteResults") || JSON.stringify(Array(projects.length).fill(0)));
+  const sum = data.reduce((a,b) => a+b, 0) || 1;
 
-  resultsBox.innerHTML=data.map((v,i)=>{
-    const p=Math.round(v/sum*100);
-    return`
+  resultsBox.innerHTML = data.map((v,i) => {
+    const pct = Math.round(v/sum*100);
+    return `
       <div class="result-row">
-        <div class="result-label">Project ${i+1} – ${p}% (${v} votes)</div>
+        <div class="result-label">Project ${i+1} – ${pct}% (${v} votes)</div>
         <div class="result-bar">
-          <div class="result-fill" style="width:${p}%"></div>
+          <div class="result-fill" style="width:${pct}%"></div>
         </div>
       </div>`;
   }).join("");
@@ -409,13 +297,23 @@ function showResults(){
 
 /* ===== INIT ===== */
 function init(){
-  const state=getState();
-  if(state==="countdown") startCountdown();
-  if(state==="vote") buildVote();
-  if(state==="results") showResults();
-  if(state==="reset"){
-    localStorage.clear();
-    location.reload();
+  const state = getState();
+  switch(state){
+    case "countdown":
+      startCountdown(VOTE_START, "Voting starts in");
+      break;
+    case "vote":
+      buildVote();
+      break;
+    case "results":
+      showResults();
+      // Countdown bis Reset
+      startCountdown(new Date(VOTE_END.getTime() + RESET_AFTER_DAYS*86400000), "Next vote in");
+      break;
+    case "reset":
+      localStorage.clear();
+      location.reload();
+      break;
   }
 }
 </script>
