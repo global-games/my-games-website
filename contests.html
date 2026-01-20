@@ -153,42 +153,42 @@
 
 <div class="main-content">
 
-  <!-- ===== TITLE ===== -->
+  <!-- ================= TITLE ================= -->
   <div class="vote-title-gradient">
     Christmas Contest 2025 – GLOBAL-GAMES
   </div>
   <div class="subtext" id="voteSubtitle"></div>
 
-  <!-- ===== STATE BOX ===== -->
-  <div id="stateBox" class="state-box"></div>
+  <!-- ================= STATE BOX ================= -->
+  <div id="voteStateBox" class="countdown-box"></div>
 
-  <!-- ===== VOTE GRID ===== -->
+  <!-- ================= VOTE GRID ================= -->
   <div class="vote-grid" id="voteGrid"></div>
 
-  <!-- ===== SUBMIT ===== -->
+  <!-- ================= SUBMIT ================= -->
   <button class="vote-submit" id="submitVote" disabled>
     Submit vote
   </button>
 
-  <!-- ===== CONFIRM ===== -->
+  <!-- ================= CONFIRM ================= -->
   <div class="vote-banner" id="voteBanner">
     ✅ Your vote was successfully submitted.
   </div>
 
-  <!-- ===== RESULTS ===== -->
+  <!-- ================= RESULTS ================= -->
   <div id="resultsBox" style="display:none;"></div>
 
 </div>
 
-<!-- ================= STYLE ================= -->
+<!-- ================= STYLES ================= -->
 <style>
-.state-box{
-  margin:30px 0;
+.countdown-box{
+  margin:32px 0;
   padding:26px;
+  text-align:center;
   border-radius:26px;
   background:linear-gradient(120deg,#181c36,#251d3a);
   color:#fff;
-  text-align:center;
   font-size:1.35rem;
   box-shadow:0 8px 44px #8e24aa66;
 }
@@ -207,6 +207,7 @@
   cursor:pointer;
   border:3px solid transparent;
   transition:.2s;
+  box-shadow:0 6px 26px #0006;
 }
 
 .vote-card:hover{transform:scale(1.04)}
@@ -224,13 +225,12 @@
   border-radius:50%;
   background:#ff4081;
   color:#fff;
+  font-weight:800;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight:800;
   opacity:0;
 }
-
 .vote-card.selected .vote-check{opacity:1}
 
 .vote-img{
@@ -243,19 +243,21 @@
 
 .vote-title{color:#fff;font-weight:700}
 .vote-link{font-size:.85rem;color:#ffb3d9;text-decoration:none}
+.vote-link:hover{text-decoration:underline}
 
 .vote-submit{
   display:block;
   margin:36px auto 0;
-  padding:16px 54px;
+  padding:16px 52px;
   border:none;
   border-radius:40px;
   font-size:1.15rem;
   font-weight:700;
-  color:#fff;
   cursor:pointer;
+  color:#fff;
   background:linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
   opacity:.5;
+  transition:.2s;
 }
 .vote-submit:not(:disabled){opacity:1}
 .vote-submit:hover:not(:disabled){transform:scale(1.06)}
@@ -268,19 +270,37 @@
   color:#9effb8;
 }
 .vote-banner.show{display:block}
+
+/* RESULTS */
+.result-row{
+  margin:16px 0;
+}
+.result-label{
+  color:#fff;
+  margin-bottom:6px;
+}
+.result-bar{
+  height:14px;
+  border-radius:8px;
+  background:#2b2f55;
+  overflow:hidden;
+}
+.result-fill{
+  height:100%;
+  background:linear-gradient(90deg,#ff4081,#8e24aa);
+}
 </style>
 
 <!-- ================= SCRIPT ================= -->
 <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 <script>
-/* ========= CONFIG (NUR HIER ANPASSEN) ========= */
+/* ===== CONFIG (HIER ÄNDERN) ===== */
 const VOTE_START = new Date("2025-12-20T00:00:00");
 const VOTE_END   = new Date("2026-01-05T23:59:59");
 const RESET_AFTER_DAYS = 90;
 const MAX_PICKS = 3;
-const API = "https://your-backend.example.com";
 
-/* ========= PROJECTS ========= */
+/* ===== PROJECTS ===== */
 const projects = Array.from({length:10},(_,i)=>({
   id:i+1,
   title:"Project "+(i+1),
@@ -288,18 +308,18 @@ const projects = Array.from({length:10},(_,i)=>({
   link:"#"
 }));
 
-/* ========= ELEMENTS ========= */
+/* ===== ELEMENTS ===== */
 const grid=document.getElementById("voteGrid");
 const submitBtn=document.getElementById("submitVote");
 const banner=document.getElementById("voteBanner");
-const stateBox=document.getElementById("stateBox");
+const stateBox=document.getElementById("voteStateBox");
 const subtitle=document.getElementById("voteSubtitle");
 const resultsBox=document.getElementById("resultsBox");
 
 let selected=[];
 let fingerprint=null;
 
-/* ========= FINGERPRINT ========= */
+/* ===== FINGERPRINT (BEST PRACTICE) ===== */
 (async()=>{
   const fp=await FingerprintJS.load({monitoring:false});
   const res=await fp.get();
@@ -307,17 +327,17 @@ let fingerprint=null;
   init();
 })();
 
-/* ========= STATE ========= */
+/* ===== STATE ===== */
 function getState(){
   const now=new Date();
   if(now<VOTE_START) return "countdown";
   if(now<=VOTE_END) return "vote";
-  if((now-VOTE_END)/86400000<RESET_AFTER_DAYS) return "results";
+  if((now-VOTE_END)/86400000 < RESET_AFTER_DAYS) return "results";
   return "reset";
 }
 
-/* ========= COUNTDOWN ========= */
-function countdown(){
+/* ===== COUNTDOWN ===== */
+function startCountdown(){
   subtitle.textContent="Voting has not started yet";
   setInterval(()=>{
     const d=VOTE_START-new Date();
@@ -329,7 +349,7 @@ function countdown(){
   },1000);
 }
 
-/* ========= BUILD ========= */
+/* ===== BUILD VOTE ===== */
 function buildVote(){
   subtitle.textContent="Select up to 3 projects";
   stateBox.style.display="none";
@@ -357,41 +377,45 @@ function buildVote(){
   });
 }
 
-/* ========= SUBMIT ========= */
-submitBtn.onclick=async()=>{
-  submitBtn.disabled=true;
-  await fetch(API+"/vote",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      fingerprint,
-      picks:selected,
-      ua:navigator.userAgent,
-      tz:Intl.DateTimeFormat().resolvedOptions().timeZone
-    })
-  });
+/* ===== SUBMIT (LOCK VIA FINGERPRINT) ===== */
+submitBtn.onclick=()=>{
+  localStorage.setItem("vote_"+VOTE_START,fingerprint);
+  localStorage.setItem("voteData_"+VOTE_START,JSON.stringify(selected));
   banner.classList.add("show");
   grid.style.display="none";
   submitBtn.style.display="none";
 };
 
-/* ========= RESULTS ========= */
+/* ===== RESULTS (REAL CHART) ===== */
 function showResults(){
   subtitle.textContent="Voting has ended";
   stateBox.textContent="Results are published 🎉";
   resultsBox.style.display="block";
-  resultsBox.innerHTML=`
-    <div class="state-box">
-      📊 Results will be displayed here.
-    </div>`;
+
+  const data=JSON.parse(localStorage.getItem("voteResults")||"[3,5,7,2,6,1,4,8,2,3]");
+  const sum=data.reduce((a,b)=>a+b,0)||1;
+
+  resultsBox.innerHTML=data.map((v,i)=>{
+    const p=Math.round(v/sum*100);
+    return`
+      <div class="result-row">
+        <div class="result-label">Project ${i+1} – ${p}% (${v} votes)</div>
+        <div class="result-bar">
+          <div class="result-fill" style="width:${p}%"></div>
+        </div>
+      </div>`;
+  }).join("");
 }
 
-/* ========= INIT ========= */
+/* ===== INIT ===== */
 function init(){
-  const s=getState();
-  if(s==="countdown") countdown();
-  if(s==="vote") buildVote();
-  if(s==="results") showResults();
-  if(s==="reset"){localStorage.clear();location.reload();}
+  const state=getState();
+  if(state==="countdown") startCountdown();
+  if(state==="vote") buildVote();
+  if(state==="results") showResults();
+  if(state==="reset"){
+    localStorage.clear();
+    location.reload();
+  }
 }
 </script>
