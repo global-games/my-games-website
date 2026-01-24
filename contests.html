@@ -182,6 +182,41 @@
 
 <div class="main-content">
 
+  <script src="wave-title.js"></script>
+  <script>
+    // Wave effect for GLOBAL-GAMES in header
+    function waveText(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = el.textContent;
+      el.innerHTML = '';
+      [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.setProperty('--char-index', i);
+        el.appendChild(span);
+      });
+    }
+    waveText('header-global-games');
+
+    // Active nav button highlight
+    window.addEventListener('pageshow', () => {
+      const navLinks = document.querySelectorAll('.nav-menu a');
+      navLinks.forEach(link => link.classList.remove('active'));
+      const current = location.pathname.split("/").pop();
+      navLinks.forEach(link => {
+        if(link.getAttribute('href') === current) link.classList.add('active');
+      });
+    });
+
+    // Header shrink on scroll
+    const header = document.querySelector('.site-header');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 50) header.classList.add('shrink');
+      else header.classList.remove('shrink');
+    });
+  </script>
+  
   <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 <script>
 /* ===== CONFIG (HIER ÄNDERN) ===== */
