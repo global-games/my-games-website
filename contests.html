@@ -6,6 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
   <style>
+    <div id="consentBanner" class="consent-banner" style="display:none;">
+  <div class="consent-box">
+    <h3>Privacy & Voting</h3>
+    <p>
+      To ensure a fair vote, we use an anonymous, locally stored device identifier
+      (fingerprint) to prevent multiple submissions. No personal data is stored,
+      transmitted, or shared with third parties.
+    </p>
+    <p>
+      More information is available in our
+      <a href="datenschutzerklärung.html" target="_blank">Privacy Policy</a>
+      and
+      <a href="impressum.html" target="_blank">Imprint</a>.
+    </p>
+    <div class="consent-actions">
+      <button id="consentAccept">Accept</button>
+      <button id="consentDecline">Decline</button>
+    </div>
+  </div>
+</div>
+
     /* ================= GLOBAL ================= */
     body {
   background:#101729!important;
@@ -219,80 +240,158 @@
   
   <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 <script>
-/* ===== CONFIG (HIER ÄNDERN) ===== */
+<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+<script>
+/* =========================================================
+   CONFIG
+========================================================= */
 const VOTE_START = new Date("2027-12-20T00:00:00");
 const VOTE_END   = new Date("2028-01-27T23:59:59");
-const RESET_AFTER_DAYS = 90;
+const RESULTS_DAYS = 90;
 const MAX_PICKS = 3;
+const OPTIONS = 10;
 
-/* ===== PROJECTS ===== */
-const projects = Array.from({length:10}, (_, i) => ({
-  id: i+1,
-  title: "Project " + (i+1),
-  img: "option"+(i+1)+".jpg",
-  link: "#"
+/* =========================================================
+   PROJECTS
+========================================================= */
+const projects = Array.from({ length: OPTIONS }, (_, i) => ({
+  id: i + 1,
+  title: `Option ${i + 1}`,
+  img: `option${i + 1}.jpg`
 }));
 
-/* ===== ELEMENTS ===== */
+/* =========================================================
+   ELEMENTS
+========================================================= */
 const grid = document.getElementById("voteGrid");
 const submitBtn = document.getElementById("submitVote");
-const banner = document.getElementById("voteBanner");
-const stateBox = document.getElementById("voteStateBox");
 const subtitle = document.getElementById("voteSubtitle");
+const stateBox = document.getElementById("voteStateBox");
 const resultsBox = document.getElementById("resultsBox");
+const consentBanner = document.getElementById("consentBanner");
 
+/* =========================================================
+   STATE
+========================================================= */
 let selected = [];
-let fingerprint = null;
+let voterHash = null;
 
-/* ===== HELPER ===== */
-function getState(){
+/* =========================================================
+   PHASE LOGIC
+========================================================= */
+function getPhase() {
   const now = new Date();
-  if(now < VOTE_START) return "countdown";
-  if(now >= VOTE_START && now <= VOTE_END) return "vote";
-  if(now > VOTE_END && now - VOTE_END < RESET_AFTER_DAYS * 86400000) return "results";
+  if (now < VOTE_START) return "before";
+  if (now <= VOTE_END) return "vote";
+  if (now <= new Date(VOTE_END.getTime() + RESULTS_DAYS * 86400000)) return "results";
   return "reset";
 }
 
-function formatCountdown(ms){
-  const days = Math.floor(ms / 86400000);
-  const hours = Math.floor(ms / 3600000) % 24;
-  const minutes = Math.floor(ms / 60000) % 60;
-  const seconds = Math.floor(ms / 1000) % 60;
-  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+/* =========================================================
+   HASH
+========================================================= */
+function hash(value) {
+  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
+    .then(buf => [...new Uint8Array(buf)]
+      .map(b => b.toString(16).padStart(2, "0")).join(""));
 }
 
-/* ===== FINGERPRINT INITIALIZATION ===== */
-(async () => {
-  const fp = await FingerprintJS.load({monitoring: false});
+/* =========================================================
+   INDEXED DB (PERSISTENT LOCK)
+========================================================= */
+function openDB() {
+  return new Promise(resolve => {
+    const req = indexedDB.open("voteDB", 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore("store");
+    req.onsuccess = e => resolve(e.target.result);
+  });
+}
+
+async function dbGet(key) {
+  const db = await openDB();
+  return new Promise(resolve => {
+    const tx = db.transaction("store", "readonly");
+    const req = tx.objectStore("store").get(key);
+    req.onsuccess = () => resolve(req.result || null);
+  });
+}
+
+async function dbSet(key, value) {
+  const db = await openDB();
+  const tx = db.transaction("store", "readwrite");
+  tx.objectStore("store").put(value, key);
+}
+
+/* =========================================================
+   MULTI-LAYER VOTE CHECK
+========================================================= */
+async function hasVoted() {
+  if (!voterHash) return false;
+
+  if (sessionStorage.getItem("voted_session") === "1") return true;
+  if (localStorage.getItem("voted_hash") === voterHash) return true;
+  if (await dbGet("voted_hash") === voterHash) return true;
+
+  return false;
+}
+
+async function markVoted() {
+  sessionStorage.setItem("voted_session", "1");
+  localStorage.setItem("voted_hash", voterHash);
+  localStorage.setItem("vote_timestamp", Date.now());
+  await dbSet("voted_hash", voterHash);
+}
+
+/* =========================================================
+   CONSENT HANDLING (GDPR)
+========================================================= */
+if (!localStorage.getItem("vote_consent")) {
+  consentBanner.style.display = "flex";
+} else {
+  loadFingerprint();
+}
+
+document.getElementById("consentAccept").onclick = () => {
+  localStorage.setItem("vote_consent", "yes");
+  consentBanner.remove();
+  loadFingerprint();
+};
+
+document.getElementById("consentDecline").onclick = () => {
+  alert(
+    "Voting is only possible after consent. You can still view the Privacy Policy and Imprint."
+  );
+};
+
+/* =========================================================
+   LOAD FINGERPRINT (ONLY AFTER CONSENT)
+========================================================= */
+async function loadFingerprint() {
+  const fp = await FingerprintJS.load({ monitoring: false });
   const res = await fp.get();
-  fingerprint = res.visitorId;
+  voterHash = await hash(res.visitorId);
   init();
-})();
-
-/* ===== COUNTDOWN ===== */
-function startCountdown(target, msg){
-  subtitle.textContent = msg;
-  stateBox.style.display = "block";
-  const interval = setInterval(() => {
-    const diff = target - new Date();
-    if(diff <= 0){
-      clearInterval(interval);
-      location.reload();
-      return;
-    }
-    stateBox.textContent = `${msg}: ${formatCountdown(diff)}`;
-  }, 1000);
 }
 
-/* ===== BUILD VOTE GRID ===== */
-function buildVote(){
-  subtitle.textContent = `Select up to ${MAX_PICKS} projects`;
-  stateBox.style.display = "none";
+/* =========================================================
+   UI MESSAGE
+========================================================= */
+function showMessage(text) {
+  stateBox.textContent = text;
+  stateBox.style.display = "block";
+}
+
+/* =========================================================
+   BUILD VOTE UI (FORMS-LIKE)
+========================================================= */
+async function buildVoteUI() {
+  subtitle.textContent = `Select up to ${MAX_PICKS} options`;
   grid.innerHTML = "";
-  
-  // Sperre prüfen
-  const voted = localStorage.getItem("vote_" + VOTE_START);
-  if(voted === fingerprint){
+  resultsBox.style.display = "none";
+  stateBox.style.display = "none";
+
+  if (await hasVoted()) {
+    showMessage("You have already submitted a response.");
     showResults();
     return;
   }
@@ -300,82 +399,90 @@ function buildVote(){
   projects.forEach(p => {
     const card = document.createElement("div");
     card.className = "vote-card";
-    card.innerHTML = `
-      <div class="vote-check">✓</div>
-      <img class="vote-img" src="${p.img}">
-      <div class="vote-title">${p.title}</div>
-      <a class="vote-link" href="${p.link}" target="_blank">View project</a>
-    `;
+    card.innerHTML = `<img src="${p.img}"><div>${p.title}</div>`;
+
     card.onclick = () => {
-      if(selected.includes(p.id)){
-        selected = selected.filter(i => i !== p.id);
+      if (selected.includes(p.id)) {
+        selected = selected.filter(x => x !== p.id);
         card.classList.remove("selected");
-      } else if(selected.length < MAX_PICKS){
+      } else if (selected.length < MAX_PICKS) {
         selected.push(p.id);
         card.classList.add("selected");
       }
       submitBtn.disabled = selected.length === 0;
     };
+
     grid.appendChild(card);
   });
 }
 
-/* ===== SUBMIT VOTE ===== */
-submitBtn.onclick = () => {
-  localStorage.setItem("vote_" + VOTE_START, fingerprint);
-  localStorage.setItem("voteData_" + VOTE_START, JSON.stringify(selected));
-  banner.classList.add("show");
-  grid.style.display = "none";
-  submitBtn.style.display = "none";
+/* =========================================================
+   SUBMIT
+========================================================= */
+submitBtn.onclick = async () => {
+  await markVoted();
 
-  // Ergebnisse aktualisieren
-  let results = JSON.parse(localStorage.getItem("voteResults") || JSON.stringify(Array(projects.length).fill(0)));
-  selected.forEach(id => { results[id-1] += 1 });
-  localStorage.setItem("voteResults", JSON.stringify(results));
+  const results = JSON.parse(
+    localStorage.getItem("results") ||
+    JSON.stringify(Array(OPTIONS).fill(0))
+  );
+
+  selected.forEach(id => results[id - 1]++);
+  localStorage.setItem("results", JSON.stringify(results));
+
+  grid.innerHTML = "";
+  submitBtn.style.display = "none";
+  showMessage("Thank you! Your response has been recorded.");
+
   setTimeout(showResults, 1000);
 };
 
-/* ===== SHOW RESULTS ===== */
-function showResults(){
-  subtitle.textContent = "Voting has ended";
-  stateBox.textContent = "Results are published 🎉";
-  stateBox.style.display = "block";
+/* =========================================================
+   RESULTS (3 MONTHS)
+========================================================= */
+function showResults() {
+  subtitle.textContent = "Results";
   resultsBox.style.display = "block";
-  grid.style.display = "none";
-  submitBtn.style.display = "none";
 
-  const data = JSON.parse(localStorage.getItem("voteResults") || JSON.stringify(Array(projects.length).fill(0)));
-  const sum = data.reduce((a,b) => a+b, 0) || 1;
+  const data = JSON.parse(
+    localStorage.getItem("results") ||
+    JSON.stringify(Array(OPTIONS).fill(0))
+  );
 
-  resultsBox.innerHTML = data.map((v,i) => {
-    const pct = Math.round(v/sum*100);
-    return `
-      <div class="result-row">
-        <div class="result-label">Project ${i+1} – ${pct}% (${v} votes)</div>
-        <div class="result-bar">
-          <div class="result-fill" style="width:${pct}%"></div>
-        </div>
-      </div>`;
-  }).join("");
+  const total = data.reduce((a, b) => a + b, 0) || 1;
+
+  resultsBox.innerHTML = data.map((v, i) => `
+    <div>
+      Option ${i + 1}: ${Math.round((v / total) * 100)}% (${v})
+      <div class="bar">
+        <div class="fill" style="width:${(v / total) * 100}%"></div>
+      </div>
+    </div>
+  `).join("");
 }
 
-/* ===== INIT ===== */
-function init(){
-  const state = getState();
-  switch(state){
-    case "countdown":
-      startCountdown(VOTE_START, "Voting starts in");
+/* =========================================================
+   INIT
+========================================================= */
+function init() {
+  switch (getPhase()) {
+    case "before":
+      showMessage("Voting has not started yet.");
       break;
+
     case "vote":
-      buildVote();
+      buildVoteUI();
       break;
+
     case "results":
+      showMessage("Voting has ended. Results are shown below.");
       showResults();
-      // Countdown bis Reset
-      startCountdown(new Date(VOTE_END.getTime() + RESET_AFTER_DAYS*86400000), "Next vote in");
       break;
+
     case "reset":
       localStorage.clear();
+      sessionStorage.clear();
+      indexedDB.deleteDatabase("voteDB");
       location.reload();
       break;
   }
