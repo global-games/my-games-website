@@ -238,9 +238,161 @@
     });
   </script>
   
-  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
-<script>
-<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+  <!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Voting</title>
+
+<!-- FingerprintJS v4 -->
+<script src="https://openfpcdn.io/fingerprintjs/v4"></script>
+
+<style>
+/* ===========================
+   GLOBAL
+=========================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 80px;
+  background: #000;
+  border-bottom: 1px solid #222;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 10;
+}
+
+/* ===========================
+   MAIN CONTENT
+=========================== */
+main {
+  padding-top: 100px; /* Text beginnt UNTER Header */
+  max-width: 900px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ===========================
+   VOTING UI
+=========================== */
+#voteGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.vote-card {
+  border: 1px solid #333;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.vote-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+.vote-card.selected {
+  border-color: #0f0;
+  background: rgba(0,255,0,0.1);
+}
+
+.vote-card.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+button {
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: #0f0;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   RESULTS
+=========================== */
+.bar {
+  background: #222;
+  height: 8px;
+  margin-top: 4px;
+}
+
+.fill {
+  height: 100%;
+  background: #0f0;
+}
+
+/* ===========================
+   CONSENT
+=========================== */
+#consentBanner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #111;
+  padding: 16px;
+  display: none;
+  justify-content: space-between;
+  z-index: 20;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Voting</h1>
+</header>
+
+<main>
+  <h2 id="voteSubtitle"></h2>
+  <div id="voteStateBox"></div>
+
+  <div id="voteGrid"></div>
+  <button id="submitVote" disabled>Submit</button>
+
+  <div id="resultsBox"></div>
+</main>
+
+<!-- CONSENT -->
+<div id="consentBanner">
+  <span>This voting uses a technical identifier to prevent duplicate submissions.</span>
+  <div>
+    <button id="consentAccept">Accept</button>
+    <button id="consentDecline">Decline</button>
+  </div>
+</div>
+
 <script>
 /* =========================================================
    CONFIG
@@ -252,7 +404,7 @@ const MAX_PICKS = 3;
 const OPTIONS = 10;
 
 /* =========================================================
-   PROJECTS
+   DATA
 ========================================================= */
 const projects = Array.from({ length: OPTIONS }, (_, i) => ({
   id: i + 1,
@@ -275,9 +427,10 @@ const consentBanner = document.getElementById("consentBanner");
 ========================================================= */
 let selected = [];
 let voterHash = null;
+let dbInstance = null;
 
 /* =========================================================
-   PHASE LOGIC
+   PHASE
 ========================================================= */
 function getPhase() {
   const now = new Date();
@@ -290,25 +443,41 @@ function getPhase() {
 /* =========================================================
    HASH
 ========================================================= */
-function hash(value) {
-  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
-    .then(buf => [...new Uint8Array(buf)]
-      .map(b => b.toString(16).padStart(2, "0")).join(""));
+async function hash(value) {
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(value)
+  );
+  return [...new Uint8Array(buf)]
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 /* =========================================================
-   INDEXED DB (PERSISTENT LOCK)
+   INDEXED DB (SAFE SINGLETON)
 ========================================================= */
-function openDB() {
+async function openDB() {
+  if (dbInstance) return dbInstance;
+
   return new Promise(resolve => {
     const req = indexedDB.open("voteDB", 1);
-    req.onupgradeneeded = e => e.target.result.createObjectStore("store");
-    req.onsuccess = e => resolve(e.target.result);
+
+    req.onupgradeneeded = e =>
+      e.target.result.createObjectStore("store");
+
+    req.onsuccess = e => {
+      dbInstance = e.target.result;
+      resolve(dbInstance);
+    };
+
+    req.onerror = () => resolve(null);
   });
 }
 
 async function dbGet(key) {
   const db = await openDB();
+  if (!db) return null;
+
   return new Promise(resolve => {
     const tx = db.transaction("store", "readonly");
     const req = tx.objectStore("store").get(key);
@@ -318,20 +487,20 @@ async function dbGet(key) {
 
 async function dbSet(key, value) {
   const db = await openDB();
-  const tx = db.transaction("store", "readwrite");
-  tx.objectStore("store").put(value, key);
+  if (!db) return;
+  db.transaction("store", "readwrite")
+    .objectStore("store")
+    .put(value, key);
 }
 
 /* =========================================================
-   MULTI-LAYER VOTE CHECK
+   VOTE CHECK
 ========================================================= */
 async function hasVoted() {
   if (!voterHash) return false;
-
   if (sessionStorage.getItem("voted_session") === "1") return true;
   if (localStorage.getItem("voted_hash") === voterHash) return true;
   if (await dbGet("voted_hash") === voterHash) return true;
-
   return false;
 }
 
@@ -343,7 +512,7 @@ async function markVoted() {
 }
 
 /* =========================================================
-   CONSENT HANDLING (GDPR)
+   CONSENT
 ========================================================= */
 if (!localStorage.getItem("vote_consent")) {
   consentBanner.style.display = "flex";
@@ -353,18 +522,16 @@ if (!localStorage.getItem("vote_consent")) {
 
 document.getElementById("consentAccept").onclick = () => {
   localStorage.setItem("vote_consent", "yes");
+  localStorage.setItem("vote_consent_timestamp", Date.now());
   consentBanner.remove();
   loadFingerprint();
 };
 
-document.getElementById("consentDecline").onclick = () => {
-  alert(
-    "Voting is only possible after consent. You can still view the Privacy Policy and Imprint."
-  );
-};
+document.getElementById("consentDecline").onclick = () =>
+  alert("Voting requires consent.");
 
 /* =========================================================
-   LOAD FINGERPRINT (ONLY AFTER CONSENT)
+   FINGERPRINT
 ========================================================= */
 async function loadFingerprint() {
   const fp = await FingerprintJS.load({ monitoring: false });
@@ -374,7 +541,7 @@ async function loadFingerprint() {
 }
 
 /* =========================================================
-   UI MESSAGE
+   UI
 ========================================================= */
 function showMessage(text) {
   stateBox.textContent = text;
@@ -382,16 +549,17 @@ function showMessage(text) {
 }
 
 /* =========================================================
-   BUILD VOTE UI (FORMS-LIKE)
+   BUILD UI
 ========================================================= */
 async function buildVoteUI() {
   subtitle.textContent = `Select up to ${MAX_PICKS} options`;
   grid.innerHTML = "";
-  resultsBox.style.display = "none";
-  stateBox.style.display = "none";
+  resultsBox.innerHTML = "";
+  submitBtn.style.display = "inline-block";
+  submitBtn.disabled = true;
 
   if (await hasVoted()) {
-    showMessage("You have already submitted a response.");
+    showMessage("You have already voted.");
     showResults();
     return;
   }
@@ -409,6 +577,16 @@ async function buildVoteUI() {
         selected.push(p.id);
         card.classList.add("selected");
       }
+
+      document
+        .querySelectorAll(".vote-card")
+        .forEach(c =>
+          c.classList.toggle(
+            "disabled",
+            selected.length >= MAX_PICKS && !c.classList.contains("selected")
+          )
+        );
+
       submitBtn.disabled = selected.length === 0;
     };
 
@@ -420,6 +598,7 @@ async function buildVoteUI() {
    SUBMIT
 ========================================================= */
 submitBtn.onclick = async () => {
+  submitBtn.disabled = true;
   await markVoted();
 
   const results = JSON.parse(
@@ -431,18 +610,16 @@ submitBtn.onclick = async () => {
   localStorage.setItem("results", JSON.stringify(results));
 
   grid.innerHTML = "";
-  submitBtn.style.display = "none";
-  showMessage("Thank you! Your response has been recorded.");
-
-  setTimeout(showResults, 1000);
+  showMessage("Thank you for voting!");
+  setTimeout(showResults, 800);
 };
 
 /* =========================================================
-   RESULTS (3 MONTHS)
+   RESULTS
 ========================================================= */
 function showResults() {
   subtitle.textContent = "Results";
-  resultsBox.style.display = "block";
+  resultsBox.innerHTML = "";
 
   const data = JSON.parse(
     localStorage.getItem("results") ||
@@ -453,9 +630,9 @@ function showResults() {
 
   resultsBox.innerHTML = data.map((v, i) => `
     <div>
-      Option ${i + 1}: ${Math.round((v / total) * 100)}% (${v})
+      Option ${i + 1}: ${Math.round(v / total * 100)}% (${v})
       <div class="bar">
-        <div class="fill" style="width:${(v / total) * 100}%"></div>
+        <div class="fill" style="width:${v / total * 100}%"></div>
       </div>
     </div>
   `).join("");
@@ -469,22 +646,22 @@ function init() {
     case "before":
       showMessage("Voting has not started yet.");
       break;
-
     case "vote":
       buildVoteUI();
       break;
-
     case "results":
-      showMessage("Voting has ended. Results are shown below.");
+      showMessage("Voting has ended.");
       showResults();
       break;
-
     case "reset":
-      localStorage.clear();
-      sessionStorage.clear();
+      ["results","voted_hash","vote_timestamp"].forEach(k =>
+        localStorage.removeItem(k)
+      );
+      sessionStorage.removeItem("voted_session");
       indexedDB.deleteDatabase("voteDB");
       location.reload();
-      break;
   }
 }
 </script>
+</body>
+</html>
