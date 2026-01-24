@@ -239,131 +239,109 @@
   </script>
   
   <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Voting</title>
+<meta charset="UTF-8">
+<title>Secure Voting</title>
 
-<!-- FingerprintJS v4 -->
 <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
 
 <style>
-/* ===========================
-   GLOBAL
-=========================== */
-* {
-  box-sizing: border-box;
+:root {
+  --bg: rgb(16,23,41);
+  --grad: linear-gradient(135deg,#0a1a3a,#4b2b7f,#c12b7e);
 }
+
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #000;
+  background: var(--bg);
   color: #fff;
 }
 
-/* ===========================
-   HEADER
-=========================== */
 header {
   position: fixed;
   top: 0;
-  width: 100%;
   height: 80px;
-  background: #000;
-  border-bottom: 1px solid #222;
+  width: 100%;
+  background: var(--grad);
   display: flex;
   align-items: center;
   padding: 0 24px;
   z-index: 10;
 }
 
-/* ===========================
-   MAIN CONTENT
-=========================== */
 main {
-  padding-top: 100px; /* Text beginnt UNTER Header */
-  max-width: 900px;
-  margin: 0 auto;
+  padding-top: 110px;
+  max-width: 1100px;
+  margin: auto;
   padding-left: 24px;
   padding-right: 24px;
 }
 
-/* ===========================
-   VOTING UI
-=========================== */
 #voteGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+  gap: 20px;
   margin-top: 24px;
 }
 
 .vote-card {
-  border: 1px solid #333;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
   padding: 12px;
+  border-radius: 10px;
   text-align: center;
   cursor: pointer;
-  transition: 0.2s;
+  transition: .25s;
 }
 
-.vote-card img {
-  max-width: 100%;
-  height: auto;
+.vote-card:hover {
+  transform: translateY(-4px);
 }
 
 .vote-card.selected {
-  border-color: #0f0;
-  background: rgba(0,255,0,0.1);
+  outline: 2px solid #ff6bdc;
 }
 
-.vote-card.disabled {
-  opacity: 0.3;
-  pointer-events: none;
+.vote-card img {
+  width: 100%;
+  border-radius: 8px;
 }
 
-/* ===========================
-   BUTTON
-=========================== */
+.vote-card a {
+  color: white;
+  text-decoration: none;
+}
+
 button {
   margin-top: 24px;
-  padding: 12px 24px;
-  background: #0f0;
+  padding: 14px 30px;
   border: none;
+  border-radius: 30px;
+  background: var(--grad);
+  color: white;
+  font-size: 16px;
   cursor: pointer;
 }
 
 button:disabled {
-  background: #444;
+  opacity: .4;
   cursor: not-allowed;
 }
 
-/* ===========================
-   RESULTS
-=========================== */
 .bar {
-  background: #222;
-  height: 8px;
-  margin-top: 4px;
+  height: 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .fill {
   height: 100%;
-  background: #0f0;
-}
-
-/* ===========================
-   CONSENT
-=========================== */
-#consentBanner {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #111;
-  padding: 16px;
-  display: none;
-  justify-content: space-between;
-  z-index: 20;
+  background: var(--grad);
 }
 </style>
 </head>
@@ -371,297 +349,127 @@ button:disabled {
 <body>
 
 <header>
-  <h1>Voting</h1>
+  <h2>Community Voting</h2>
 </header>
 
 <main>
-  <h2 id="voteSubtitle"></h2>
-  <div id="voteStateBox"></div>
-
+  <h3 id="subtitle"></h3>
+  <p id="state"></p>
   <div id="voteGrid"></div>
-  <button id="submitVote" disabled>Submit</button>
-
-  <div id="resultsBox"></div>
+  <button id="submit" disabled>Submit Vote</button>
+  <div id="results"></div>
 </main>
 
-<!-- CONSENT -->
-<div id="consentBanner">
-  <span>This voting uses a technical identifier to prevent duplicate submissions.</span>
-  <div>
-    <button id="consentAccept">Accept</button>
-    <button id="consentDecline">Decline</button>
-  </div>
-</div>
-
 <script>
-/* =========================================================
-   CONFIG
-========================================================= */
-const VOTE_START = new Date("2027-12-20T00:00:00");
-const VOTE_END   = new Date("2028-01-27T23:59:59");
-const RESULTS_DAYS = 90;
-const MAX_PICKS = 3;
+/* ================= CONFIG ================= */
 const OPTIONS = 10;
+const MAX_PICKS = 3;
+const VOTE_LENGTH_DAYS = 14;
+const RESULT_DAYS = 7;
 
-/* =========================================================
-   DATA
-========================================================= */
-const projects = Array.from({ length: OPTIONS }, (_, i) => ({
-  id: i + 1,
-  title: `Option ${i + 1}`,
-  img: `option${i + 1}.jpg`
-}));
+/* ================= TIME CYCLE ================= */
+const epoch = new Date("2025-01-01").getTime();
+const now = Date.now();
+const cycle = (VOTE_LENGTH_DAYS + RESULT_DAYS) * 86400000;
+const pos = (now - epoch) % cycle;
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
-const grid = document.getElementById("voteGrid");
-const submitBtn = document.getElementById("submitVote");
-const subtitle = document.getElementById("voteSubtitle");
-const stateBox = document.getElementById("voteStateBox");
-const resultsBox = document.getElementById("resultsBox");
-const consentBanner = document.getElementById("consentBanner");
-
-/* =========================================================
-   STATE
-========================================================= */
+/* ================= STATE ================= */
 let selected = [];
-let voterHash = null;
-let dbInstance = null;
+let voterId = null;
 
-/* =========================================================
-   PHASE
-========================================================= */
-function getPhase() {
-  const now = new Date();
-  if (now < VOTE_START) return "before";
-  if (now <= VOTE_END) return "vote";
-  if (now <= new Date(VOTE_END.getTime() + RESULTS_DAYS * 86400000)) return "results";
-  return "reset";
+/* ================= SECURITY ================= */
+async function fingerprint() {
+  const fp = await FingerprintJS.load({ monitoring:false });
+  const r = await fp.get();
+  const entropy = [
+    r.visitorId,
+    screen.width, screen.height,
+    navigator.language,
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  ].join("|");
+
+  const buf = await crypto.subtle.digest("SHA-256",new TextEncoder().encode(entropy));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
-/* =========================================================
-   HASH
-========================================================= */
-async function hash(value) {
-  const buf = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(value)
-  );
-  return [...new Uint8Array(buf)]
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-/* =========================================================
-   INDEXED DB (SAFE SINGLETON)
-========================================================= */
-async function openDB() {
-  if (dbInstance) return dbInstance;
-
-  return new Promise(resolve => {
-    const req = indexedDB.open("voteDB", 1);
-
-    req.onupgradeneeded = e =>
-      e.target.result.createObjectStore("store");
-
-    req.onsuccess = e => {
-      dbInstance = e.target.result;
-      resolve(dbInstance);
-    };
-
-    req.onerror = () => resolve(null);
-  });
-}
-
-async function dbGet(key) {
-  const db = await openDB();
-  if (!db) return null;
-
-  return new Promise(resolve => {
-    const tx = db.transaction("store", "readonly");
-    const req = tx.objectStore("store").get(key);
-    req.onsuccess = () => resolve(req.result || null);
-  });
-}
-
-async function dbSet(key, value) {
-  const db = await openDB();
-  if (!db) return;
-  db.transaction("store", "readwrite")
-    .objectStore("store")
-    .put(value, key);
-}
-
-/* =========================================================
-   VOTE CHECK
-========================================================= */
-async function hasVoted() {
-  if (!voterHash) return false;
-  if (sessionStorage.getItem("voted_session") === "1") return true;
-  if (localStorage.getItem("voted_hash") === voterHash) return true;
-  if (await dbGet("voted_hash") === voterHash) return true;
-  return false;
-}
-
-async function markVoted() {
-  sessionStorage.setItem("voted_session", "1");
-  localStorage.setItem("voted_hash", voterHash);
-  localStorage.setItem("vote_timestamp", Date.now());
-  await dbSet("voted_hash", voterHash);
-}
-
-/* =========================================================
-   CONSENT
-========================================================= */
-if (!localStorage.getItem("vote_consent")) {
-  consentBanner.style.display = "flex";
-} else {
-  loadFingerprint();
-}
-
-document.getElementById("consentAccept").onclick = () => {
-  localStorage.setItem("vote_consent", "yes");
-  localStorage.setItem("vote_consent_timestamp", Date.now());
-  consentBanner.remove();
-  loadFingerprint();
-};
-
-document.getElementById("consentDecline").onclick = () =>
-  alert("Voting requires consent.");
-
-/* =========================================================
-   FINGERPRINT
-========================================================= */
-async function loadFingerprint() {
-  const fp = await FingerprintJS.load({ monitoring: false });
-  const res = await fp.get();
-  voterHash = await hash(res.visitorId);
+/* ================= INIT ================= */
+(async () => {
+  voterId = await fingerprint();
   init();
-}
+})();
 
-/* =========================================================
-   UI
-========================================================= */
-function showMessage(text) {
-  stateBox.textContent = text;
-  stateBox.style.display = "block";
-}
+function init() {
+  const subtitle = document.getElementById("subtitle");
+  const state = document.getElementById("state");
 
-/* =========================================================
-   BUILD UI
-========================================================= */
-async function buildVoteUI() {
-  subtitle.textContent = `Select up to ${MAX_PICKS} options`;
-  grid.innerHTML = "";
-  resultsBox.innerHTML = "";
-  submitBtn.style.display = "inline-block";
-  submitBtn.disabled = true;
-
-  if (await hasVoted()) {
-    showMessage("You have already voted.");
+  if (pos < VOTE_LENGTH_DAYS * 86400000) {
+    if (localStorage.getItem(voterId)) {
+      state.textContent = "You have already voted.";
+      showResults();
+    } else {
+      subtitle.textContent = "Voting is open";
+      state.textContent = new Date().toLocaleDateString();
+      buildVote();
+    }
+  } else {
+    subtitle.textContent = "Results";
+    state.textContent = new Date().toLocaleDateString();
     showResults();
-    return;
   }
+}
 
-  projects.forEach(p => {
+/* ================= UI ================= */
+function buildVote() {
+  const grid = document.getElementById("voteGrid");
+  grid.innerHTML = "";
+
+  for (let i=1;i<=OPTIONS;i++) {
     const card = document.createElement("div");
     card.className = "vote-card";
-    card.innerHTML = `<img src="${p.img}"><div>${p.title}</div>`;
-
+    card.innerHTML = `
+      <a href="#" target="_blank">
+        <img src="option${i}.jpg">
+        <p>Option ${i}</p>
+      </a>
+    `;
     card.onclick = () => {
-      if (selected.includes(p.id)) {
-        selected = selected.filter(x => x !== p.id);
+      if (selected.includes(i)) {
+        selected = selected.filter(x=>x!==i);
         card.classList.remove("selected");
       } else if (selected.length < MAX_PICKS) {
-        selected.push(p.id);
+        selected.push(i);
         card.classList.add("selected");
       }
-
-      document
-        .querySelectorAll(".vote-card")
-        .forEach(c =>
-          c.classList.toggle(
-            "disabled",
-            selected.length >= MAX_PICKS && !c.classList.contains("selected")
-          )
-        );
-
-      submitBtn.disabled = selected.length === 0;
+      submit.disabled = selected.length === 0;
     };
-
     grid.appendChild(card);
-  });
-}
-
-/* =========================================================
-   SUBMIT
-========================================================= */
-submitBtn.onclick = async () => {
-  submitBtn.disabled = true;
-  await markVoted();
-
-  const results = JSON.parse(
-    localStorage.getItem("results") ||
-    JSON.stringify(Array(OPTIONS).fill(0))
-  );
-
-  selected.forEach(id => results[id - 1]++);
-  localStorage.setItem("results", JSON.stringify(results));
-
-  grid.innerHTML = "";
-  showMessage("Thank you for voting!");
-  setTimeout(showResults, 800);
-};
-
-/* =========================================================
-   RESULTS
-========================================================= */
-function showResults() {
-  subtitle.textContent = "Results";
-  resultsBox.innerHTML = "";
-
-  const data = JSON.parse(
-    localStorage.getItem("results") ||
-    JSON.stringify(Array(OPTIONS).fill(0))
-  );
-
-  const total = data.reduce((a, b) => a + b, 0) || 1;
-
-  resultsBox.innerHTML = data.map((v, i) => `
-    <div>
-      Option ${i + 1}: ${Math.round(v / total * 100)}% (${v})
-      <div class="bar">
-        <div class="fill" style="width:${v / total * 100}%"></div>
-      </div>
-    </div>
-  `).join("");
-}
-
-/* =========================================================
-   INIT
-========================================================= */
-function init() {
-  switch (getPhase()) {
-    case "before":
-      showMessage("Voting has not started yet.");
-      break;
-    case "vote":
-      buildVoteUI();
-      break;
-    case "results":
-      showMessage("Voting has ended.");
-      showResults();
-      break;
-    case "reset":
-      ["results","voted_hash","vote_timestamp"].forEach(k =>
-        localStorage.removeItem(k)
-      );
-      sessionStorage.removeItem("voted_session");
-      indexedDB.deleteDatabase("voteDB");
-      location.reload();
   }
 }
+
+/* ================= SUBMIT ================= */
+submit.onclick = () => {
+  submit.disabled = true;
+  localStorage.setItem(voterId,"1");
+
+  const data = JSON.parse(localStorage.getItem("results")||"[]");
+  selected.forEach(i => data[i-1]=(data[i-1]||0)+1);
+  localStorage.setItem("results",JSON.stringify(data));
+
+  showResults();
+};
+
+/* ================= RESULTS ================= */
+function showResults() {
+  const box = document.getElementById("results");
+  const data = JSON.parse(localStorage.getItem("results")||"[]");
+  const total = data.reduce((a,b)=>a+b,0)||1;
+
+  box.innerHTML = data.map((v,i)=>`
+    <p>Option ${i+1} – ${Math.round(v/total*100)}%</p>
+    <div class="bar"><div class="fill" style="width:${v/total*100}%"></div></div>
+  `).join("");
+}
 </script>
+
 </body>
 </html>
