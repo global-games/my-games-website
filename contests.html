@@ -2,13 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Contests | GLOBAL-GAMES</title>
+  <title>Coming soon | GLOBAL-GAMES</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style-gradient.css">
-
-  <!-- FingerprintJS -->
-  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
-
   <style>
     /* ================= GLOBAL ================= */
     body {
@@ -57,7 +53,7 @@
       font-size: 2rem;
       font-weight: bold;
       letter-spacing: .14em;
-      margin: 0.4em 0 0 0; /* Logo etwas nach oben verschoben */
+      margin: 0.4em 0 0 0; /* Logo leicht nach oben verschoben */
       display: flex;
       gap: 0.07em;
       user-select: none;
@@ -117,39 +113,253 @@
 
     /* ================= MAIN CONTENT ================= */
     .main-content {
-      max-width: 1000px;
+      background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
+      border-radius: 30px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 20px 30px;
+      margin-top: 20px; /* Header Padding ist schon 120px */
+      margin-bottom: 42px;
+      padding: 40px 33px;
+      box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
+      z-index: 11;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .vote-title-gradient {
-      font-size: 2.2rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, #ff4081, #8e24aa, #1a237e);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
+    .headline {
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-align: center;
+      background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
+      background-size:210% 110%;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;color:transparent;
+      animation: animateGradient 7s ease-in-out infinite alternate;
+      margin-bottom: 40px;
     }
 
-    .subtext { color: #ccc; margin-bottom: 20px; }
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin: 0 auto;
+      max-width: 640px;
+    }
+
+    .news-card {
+      background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
+      border-radius: 20px;
+      box-shadow: 0 4px 18px #8e24aa66;
+      padding: 28px 24px;
+      color: #fff;
+      font-size: 1.23rem;
+      font-weight:500;
+      text-align: center;
+    }
+
+    @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
+    @media (max-width:900px) { .main-content{max-width:99vw;} }
+    @media (max-width:700px) { .main-content{margin-top:130px;padding:8vw 1vw;} .headline{font-size:1.3rem;} }
   </style>
 </head>
-
 <body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="contests.html">My Contests</a></li>
+          <li><a href="comingsoon.html">Coming soon</a></li>
+          <li><a href="/textgenerator">KI Textgenerator</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coming soon | GLOBAL-GAMES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style-gradient.css">
+  <style>
+    /* ================= GLOBAL ================= */
+    body {
+  background:#101729!important;
+  margin:0;
+  padding-top: 120px; /* Platz für fixen Header */
+  font-family: Arial, sans-serif;
+}
 
-<header class="site-header">
-  <div class="header-inner">
-    <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
-    <nav class="nav-menu">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="contests.html">My Contests</a></li>
-        <li><a href="comingsoon.html">Coming soon</a></li>
-        <li><a href="/textgenerator">KI Textgenerator</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+    /* ================= HEADER ================= */
+    .site-header {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      background: linear-gradient(90deg, #1a237e, #8e24aa 70%, #ff4081 100%);
+      box-shadow: 0 6px 24px #8e24aa59;
+      border-bottom: 3px solid #8e24aa;
+      animation: headerGradient 8s linear infinite alternate;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .site-header.shrink {
+      padding-bottom: 4px;
+      padding-top: 4px;
+    }
+
+    @keyframes headerGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* ================= LOGO ================= */
+    .logo-anim {
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: .14em;
+      margin: 0.4em 0 0 0; /* Logo leicht nach oben verschoben */
+      display: flex;
+      gap: 0.07em;
+      user-select: none;
+      color: #fff; /* weiße Buchstaben */
+    }
+
+    .logo-anim span {
+      display: inline-block;
+      animation: lightWave 2.5s cubic-bezier(.45,.05,.55,.95) infinite;
+      animation-delay: calc(var(--char-index) * 0.1s);
+    }
+
+    @keyframes lightWave {
+      0%,100% { transform: translateY(0) scale(1) rotate(0deg); }
+      50% { transform: translateY(-8px) scale(1.03) rotate(-1deg); } /* leichte Welle */
+    }
+
+    /* ================= NAV BUTTONS ================= */
+    .nav-menu ul {
+      list-style: none;
+      display: flex;
+      gap: 1.2em;
+      margin: 0;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 11px 28px;
+      border-radius: 30px;
+      border: 2px solid #fff;
+      background: transparent;
+      transition: background .18s, transform .13s, box-shadow .2s, color .18s;
+      box-shadow: 0 2px 14px rgba(255,255,255,0.25);
+      display: inline-block;
+      margin-top: 0px; /* Button nach oben verschoben */
+    }
+
+    .nav-menu a.active {
+      background: #fff;
+      color: #6a1b9a;
+      transform: scale(1.08);
+      box-shadow: 0 6px 22px rgba(255,255,255,0.75);
+    }
+
+    .nav-menu a:hover {
+      background: #fff;
+      color: #6a1b9a;
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.6);
+    }
+
+    /* ================= MAIN CONTENT ================= */
+    .main-content {
+      background: linear-gradient(120deg, #181c36 40%, #251d3a 100%);
+      border-radius: 30px;
+      max-width: 800px;
+      margin: 0 auto;
+      margin-top: 20px; /* Header Padding ist schon 120px */
+      margin-bottom: 42px;
+      padding: 40px 33px;
+      box-shadow: 0 8px 44px #8e24aa99, 0 1.5px 6px #ff408155;
+      z-index: 11;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .headline {
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-align: center;
+      background: linear-gradient(90deg,#1a237e,#8e24aa,#ff4081);
+      background-size:210% 110%;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;color:transparent;
+      animation: animateGradient 7s ease-in-out infinite alternate;
+      margin-bottom: 40px;
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin: 0 auto;
+      max-width: 640px;
+    }
+
+    .news-card {
+      background: linear-gradient(120deg, #1a237eAA 33%, #8e24aa77 92%);
+      border-radius: 20px;
+      box-shadow: 0 4px 18px #8e24aa66;
+      padding: 28px 24px;
+      color: #fff;
+      font-size: 1.23rem;
+      font-weight:500;
+      text-align: center;
+    }
+
+    @keyframes animateGradient { 0%{background-position:0% 0%}100%{background-position:100% 0%} }
+    @media (max-width:900px) { .main-content{max-width:99vw;} }
+    @media (max-width:700px) { .main-content{margin-top:130px;padding:8vw 1vw;} .headline{font-size:1.3rem;} }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-anim" id="header-global-games">GLOBAL-GAMES</div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="contests.html">My Contests</a></li>
+          <li><a href="comingsoon.html">Coming soon</a></li>
+          <li><a href="/textgenerator">KI Textgenerator</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
 <div class="main-content">
 
